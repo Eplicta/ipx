@@ -340,14 +340,18 @@ IPX does not replace any of these, and none covers a plan with verbatim wording,
 
 | Standard | What it covers | Relation to IPX |
 |---|---|---|
-| Riksarkivet ERMS application of CITS | XML schemas for classification structure and lists of classifications | The likeliest first converter target. Its schema must be read before a crosswalk is promised. |
-| Riksarkivet FGS | Transfer packages (METS-based XML) between business systems and e-archives | Not a plan format. Out of scope. |
-| Noark 5 (Norway) | Archive structure and classification system in XML, with retention and disposal metadata | A design reference for retention. |
-| MoReq2010 | Records system requirements and an XML export schema, with a disposal schedule per class | A design reference for retention. |
+| Riksarkivet FGS Arkivredovisning (verksamhetsbaserad, RAFGS5) | An archive description in XML: EAD3 for the archive and EAC-CPF for the archive creator, with a classification structure, record groups and record types. Retention appears only as prose in `appraisal`. | The closest published format to a plan. Nodes and rows map well. Retention can be imported only as text, so it arrives as `unclear` with the wording kept. |
+| Riksarkivet ERMS application of CITS (`ermsClassifications.xml`) | A closed XML tree of names. A unit has a name, a description and nested units, with no id, no code and no extension point. Riksarkivet marks its `disposal` element as not used in this export. | Carries structure only. An exporter needs the IPX document beside it to be lossless. |
+| CITS ERMS 2.1.2, the main case export | A per-case transfer format. `aggregation` and `record` can carry a `disposal` element with a free-text period, and extra data through `additionalXMLData`. | Not a plan format. No converter is planned. |
+| Noark 5 (Norway) | Classification system and archive structure in XML. `kassasjon` holds a decision, its basis, a retention time in whole years and a date; one per unit. No trigger, no language attribute, no extension point on a class. | An importer can be lossless by keeping the original XML under `ext`. An exporter is best effort and needs a side-by-side pair. |
+| MoReq2010 | A disposal schedule per class, with an action, a trigger, an interval and an offset, and contextual elements for extra data. | The closest model of retention. An exporter is feasible in a single file. |
 | RiC-O (International Council on Archives) | An ontology for describing archival resources | Out of scope as a converter. |
 | KLASSA (SKR) | The classification scheme for Swedish local government | Carried as `references` with `scheme: klassa`. |
+| Riksarkivet FGS Paketstruktur, Personal, Databas, Ärendehantering | Packages, personnel records, database dumps and cases | Not plan formats. Out of scope. |
 
-These descriptions come from the standards' public pages; none of the schemas has been read in full for IPX 1.0.0.
+None of the targets has a home for a trigger, a qualifier, a condition, an outcome, several retention entries on one row, or the structure of `asWritten`. A converter to one of them lists what it drops in `provenance.conversions[].losses` (section 11).
+
+These descriptions come from the published XML schemas and specifications as read by the authors in November 2026. Two were read from copies: the MoReq schemas come from an archived copy, and the FGS tightening of EAD3 is known from the specification text, not from a schema. No converter is part of IPX 1.0.0.
 
 ## 13. Other serializations
 
