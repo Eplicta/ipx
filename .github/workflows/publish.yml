@@ -1,24 +1,34 @@
-name: Release
+name: Publish
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - master
+    paths:
+      - 'src/**'
+      - 'schema/**'
+      - 'version.txt'
+      - 'Directory.Build.props'
+  workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
 jobs:
-  release:
+  publish:
     if: github.repository == 'Eplicta/ipx'
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out the code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: |
             8.0.x
@@ -26,20 +36,24 @@ jobs:
             10.0.x
             11.0.x
 
-      - name: Read the version from the tag
+      - name: Work out the version
         id: version
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
-            echo "The tag $GITHUB_REF_NAME is not v<major>.<minor>.<patch> with an optional -<prerelease>." >&2
+          BASE="$(tr -d '[:space:]' < version.txt)"
+          if ! [[ "$BASE" =~ ^([0-9]+)\.([0-9]+)(-preview)?$ ]]; then
+            echo "version.txt must hold <major>.<minor> or <major>.<minor>-preview, not '$BASE'." >&2
             exit 1
           fi
-          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
-          if [[ "$VERSION" == *-* ]]; then
-            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          if [[ -n "${BASH_REMATCH[3]}" ]]; then
+            VERSION="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.0-preview.${GITHUB_RUN_NUMBER}"
+            PRERELEASE=true
           else
-            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+            VERSION="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${GITHUB_RUN_NUMBER}"
+            PRERELEASE=false
           fi
+          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
+          echo "Publishing $VERSION"
 
       - name: Restore
         run: dotnet restore
@@ -61,5 +75,6 @@ jobs:
       - name: Create the GitHub release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.value }}
           PRERELEASE: ${{ steps.version.outputs.prerelease == 'true' && '--prerelease' || '' }}
-        run: gh release create "$GITHUB_REF_NAME" artifacts/*.nupkg artifacts/*.snupkg spec/ipx-spec.md schema/ipx-1.0.0.schema.json --title "$GITHUB_REF_NAME" --generate-notes $PRERELEASE
+        run: gh release create "v$VERSION" artifacts/*.nupkg artifacts/*.snupkg spec/ipx-spec.md schema/ipx-1.0.0.schema.json --target "$GITHUB_SHA" --title "v$VERSION" --generate-notes $PRERELEASE
