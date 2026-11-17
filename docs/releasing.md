@@ -36,7 +36,14 @@ Moving from `1.0-preview` to `1.0` is how the first stable version is published.
 
 ## One-time setup
 
-The `Publish` workflow needs a repository secret named `NUGET_API_KEY`: a key from nuget.org that is allowed to push the packages `Eplicta.Ipx` and `Eplicta.Ipx.Tool`, so give it the glob pattern `Eplicta.Ipx*`. Create the secret under *Settings, Secrets and variables, Actions*. A package id can only be pushed by a key whose glob pattern covers it, and nuget.org keys expire, so set a reminder for the expiry date. When the key has expired, the workflow fails at the push and the version is not published.
+The `Publish` workflow publishes with nuget.org Trusted Publishing, so there is no API key to store and nothing that expires.
+
+1. On nuget.org, under *Trusted Publishing*, create a policy with the package owner that owns the packages, the repository owner `Eplicta`, the repository `ipx`, the workflow file `publish.yml`, the scope *Push new packages and package versions*, and the glob pattern `Eplicta.Ipx*`, which covers both `Eplicta.Ipx` and `Eplicta.Ipx.Tool`. Leave the environment empty.
+2. In the repository, under *Settings, Secrets and variables, Actions, Variables*, add a variable named `NUGET_USER` that holds the nuget.org profile name of the account that created the policy. It is the profile name, not the e-mail address.
+
+While the repository is private, a new policy is active for seven days and becomes permanent after its first successful publish. If seven days pass without one, activate the policy again on nuget.org.
+
+The workflow asks GitHub for a short-lived token for the run (`id-token: write`), exchanges it for a nuget.org key that is valid for one hour and only for the packages the policy covers, and pushes with it.
 
 ## When a publish fails
 

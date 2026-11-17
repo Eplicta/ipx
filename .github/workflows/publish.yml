@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 concurrency:
   group: publish
@@ -69,9 +70,15 @@ jobs:
           dotnet pack src/Eplicta.Ipx/Eplicta.Ipx.csproj --configuration Release --no-build --output artifacts -p:Version=${{ steps.version.outputs.value }}
           dotnet pack src/Eplicta.Ipx.Tool/Eplicta.Ipx.Tool.csproj --configuration Release --no-build --output artifacts -p:Version=${{ steps.version.outputs.value }}
 
+      - name: Log in to nuget.org
+        id: nuget
+        uses: NuGet/login@v1
+        with:
+          user: ${{ vars.NUGET_USER }}
+
       - name: Publish to nuget.org
         env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          NUGET_API_KEY: ${{ steps.nuget.outputs.NUGET_API_KEY }}
         run: dotnet nuget push "artifacts/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
 
       - name: Create the GitHub release
