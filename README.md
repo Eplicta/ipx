@@ -43,7 +43,7 @@ A plan is a tree of nodes and a list of rows. Each row says what is kept and wha
 ```json
 {
   "id": "r2",
-  "rowKind": "caseType",
+  "rowKind": "case-type",
   "forms": ["compulsory-school"],
   "name": { "sv": "Ansökan om skolplats", "en": "Application for a school place" },
   "node": "pupils.admission",

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://cloud.fortdocs.app/informationshanteringsplan/ipx/1.0.0/schema.json",
+  "$schema": "https://eplicta.github.io/ipx/schema/1.0.0/ipx.schema.json",
   "format": "ipx",
   "formatVersion": "1.0.0",
   "kind": "plan",
@@ -42,7 +42,7 @@
   "rows": [
     {
       "id": "r1",
-      "rowKind": "recordType",
+      "rowKind": "record-type",
       "forms": ["shared"],
       "name": { "sv": "Styrelseprotokoll", "en": "Board minutes" },
       "node": "governance.board-minutes",
@@ -56,7 +56,7 @@
     },
     {
       "id": "r2",
-      "rowKind": "caseType",
+      "rowKind": "case-type",
       "forms": ["compulsory-school"],
       "name": { "sv": "Ansökan om skolplats", "en": "Application for a school place" },
       "node": "pupils.admission",
@@ -83,7 +83,7 @@
     },
     {
       "id": "r3",
-      "rowKind": "recordType",
+      "rowKind": "record-type",
       "forms": ["compulsory-school"],
       "name": { "sv": "Slutbetyg", "en": "Final grades" },
       "node": "pupils.final-grades",

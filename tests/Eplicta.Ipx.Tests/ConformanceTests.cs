@@ -11,7 +11,8 @@ public class ConformanceTests
         foreach (var item in (JsonArray)manifest["cases"])
         {
             var codes = item["codes"] is JsonArray array ? array.Select(c => (string)c).ToArray() : [];
-            yield return [(string)item["file"], (string)item["outcome"], string.Join(",", codes)];
+            var warnings = item["warnings"] is JsonArray listed ? listed.Select(c => (string)c).ToArray() : [];
+            yield return [(string)item["file"], (string)item["outcome"], string.Join(",", codes), string.Join(",", warnings)];
         }
     }
 
@@ -34,7 +35,7 @@ public class ConformanceTests
 
     [Theory]
     [MemberData(nameof(Cases))]
-    public void Every_case_is_classified_as_the_manifest_says(string file, string outcome, string expectedCodes)
+    public void Every_case_is_classified_as_the_manifest_says(string file, string outcome, string expectedCodes, string expectedWarnings)
     {
         var text = TestFiles.Read("conformance/" + file);
 
@@ -48,6 +49,11 @@ public class ConformanceTests
         if (outcome == "valid")
         {
             Assert.True(result.IsValid, file + ": " + string.Join("; ", result.Errors.Select(e => $"{e.Path}: {e.Message}")));
+            foreach (var code in expectedWarnings.Split(',', StringSplitOptions.RemoveEmptyEntries))
+            {
+                Assert.Contains(result.Warnings, w => w.Code == code);
+            }
+
             return;
         }
 

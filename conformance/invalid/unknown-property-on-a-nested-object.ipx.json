@@ -1,0 +1,15 @@
+{
+  "format": "ipx",
+  "formatVersion": "1.0.0",
+  "kind": "plan",
+  "document": { "id": "44444444-4444-4444-8444-444444444404", "name": { "en": "An unknown property on a mapping" }, "language": "sv" },
+  "nodes": [ { "id": "n1", "parent": null, "title": { "en": "Govern" } } ],
+  "rows": [
+    {
+      "id": "r1",
+      "forms": ["shared"],
+      "node": "n1", "mappings": [ { "node": "n1", "relation": "exact", "madeUp": 1 } ],
+      "retention": [ { "disposition": "retain", "trigger": "none", "months": null } ]
+    }
+  ]
+}

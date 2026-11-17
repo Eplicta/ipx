@@ -18,6 +18,9 @@ public static class IpxIssueCodes
     /// <summary>Error: a taxonomy document has rows.</summary>
     public const string TaxonomyHasRows = "taxonomy-has-rows";
 
+    /// <summary>Error: a date is not a real calendar date, such as 2026-02-30 or 2026-13.</summary>
+    public const string InvalidDate = "invalid-date";
+
     /// <summary>Warning: the months of a retention entry are not the period converted to months.</summary>
     public const string MonthsMismatch = "months-mismatch";
 

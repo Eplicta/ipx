@@ -1,0 +1,15 @@
+{
+  "format": "ipx",
+  "formatVersion": "1.0.0",
+  "kind": "plan",
+  "document": { "id": "44444444-4444-4444-8444-444444444401", "name": { "en": "A date that is not on the calendar" }, "language": "sv", "updatedOn": "2026-02-30" },
+  "nodes": [ { "id": "n1", "parent": null, "title": { "en": "Govern" } } ],
+  "rows": [
+    {
+      "id": "r1",
+      "forms": ["shared"],
+      "node": "n1",
+      "retention": [ { "disposition": "retain", "trigger": "none", "months": null } ]
+    }
+  ]
+}

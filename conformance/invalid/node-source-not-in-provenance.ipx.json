@@ -1,0 +1,15 @@
+{
+  "format": "ipx",
+  "formatVersion": "1.0.0",
+  "kind": "plan",
+  "document": { "id": "44444444-4444-4444-8444-444444444402", "name": { "en": "A node that cites a source that is not listed" }, "language": "sv" },
+  "nodes": [ { "id": "n1", "parent": null, "title": { "en": "Govern" }, "source": { "ref": "no-such-source", "page": 3 } } ],
+  "rows": [
+    {
+      "id": "r1",
+      "forms": ["shared"],
+      "node": "n1",
+      "retention": [ { "disposition": "retain", "trigger": "none", "months": null } ]
+    }
+  ]
+}

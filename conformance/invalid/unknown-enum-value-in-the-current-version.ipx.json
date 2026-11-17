@@ -1,0 +1,15 @@
+{
+  "format": "ipx",
+  "formatVersion": "1.0.0",
+  "kind": "plan",
+  "document": { "id": "44444444-4444-4444-8444-444444444403", "name": { "en": "An enumeration value the version does not have" }, "language": "sv" },
+  "nodes": [ { "id": "n1", "parent": null, "title": { "en": "Govern" } } ],
+  "rows": [
+    {
+      "id": "r1",
+      "forms": ["shared"],
+      "node": "n1",
+      "retention": [ { "disposition": "dispose", "period": { "amount": 5, "unit": "year" }, "months": 60, "trigger": "calendar-year-end" } ]
+    }
+  ]
+}

@@ -22,7 +22,7 @@ public class DocumentationExamplesTests
         var result = IpxValidator.Validate(plan);
 
         Assert.True(result.IsValid);
-        Assert.Contains("\"rowKind\": \"recordType\"", IpxSerializer.ToJson(plan));
+        Assert.Contains("\"rowKind\": \"record-type\"", IpxSerializer.ToJson(plan));
     }
 
     [Fact]

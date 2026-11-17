@@ -6,6 +6,11 @@ internal static class IpxSemanticRules
 {
     private const int SupportedMinorVersion = 0;
 
+    private static readonly HashSet<string> DateProperties = new(StringComparer.Ordinal)
+    {
+        "createdOn", "updatedOn", "validFrom", "validTo", "publishedDate", "lastFetchedAt", "decidedDate", "proposedValidFrom", "lastKnownPlanDate", "on"
+    };
+
     public static IpxValidationResult Check(JsonObject root, IpxValidationOptions options)
     {
         var errors = new List<IpxIssue>();
@@ -41,6 +46,7 @@ internal static class IpxSemanticRules
         CheckRows(rows, nodeIds, systemIds, planIds, sourceIds, taxonomyIds, errors, warnings);
         CheckPlans(plans, planIds, sourceIds, errors, warnings);
         CheckPupilTotal(root, sourceIds, errors);
+        CheckDates(root, string.Empty, errors);
         CheckVersion(root, warnings);
 
         return new IpxValidationResult(errors, warnings);
@@ -175,7 +181,7 @@ internal static class IpxSemanticRules
 
     private static void CheckPupilTotal(JsonObject root, HashSet<string> sourceIds, List<IpxIssue> errors)
     {
-        if (root["organisation"]?["pupilTotal"] is JsonObject total) Require(total, "sourceId", sourceIds, "/organisation/pupilTotal", errors, "is not in provenance.sources");
+        if (root["organisation"]?["pupilTotal"] is JsonObject total) Require(total, "source", sourceIds, "/organisation/pupilTotal", errors, "is not in provenance.sources");
     }
 
     private static void CheckVersion(JsonObject root, List<IpxIssue> warnings)
@@ -184,6 +190,46 @@ internal static class IpxSemanticRules
         {
             warnings.Add(new IpxIssue(IpxIssueCodes.NewerMinorVersion, "/formatVersion", $"Version {Text(root, "formatVersion")} is newer than this validator knows; properties and values it added are not checked."));
         }
+    }
+
+    private static void CheckDates(JsonNode node, string path, List<IpxIssue> errors)
+    {
+        switch (node)
+        {
+            case JsonObject obj:
+                foreach (var pair in obj)
+                {
+                    if (pair.Key == "ext" || pair.Value is null) continue;
+
+                    var childPath = $"{path}/{pair.Key}";
+                    if (DateProperties.Contains(pair.Key) && pair.Value is JsonValue value && value.TryGetValue<string>(out var text) && !IsCalendarDate(text))
+                    {
+                        errors.Add(new IpxIssue(IpxIssueCodes.InvalidDate, childPath, $"'{text}' is not a real calendar date."));
+                    }
+
+                    CheckDates(pair.Value, childPath, errors);
+                }
+
+                break;
+            case JsonArray array:
+                for (var index = 0; index < array.Count; index++)
+                {
+                    if (array[index] is { } item) CheckDates(item, $"{path}/{index}", errors);
+                }
+
+                break;
+        }
+    }
+
+    private static bool IsCalendarDate(string text)
+    {
+        var parts = text.Split('-');
+        if (parts.Length == 0 || parts.Length > 3 || !int.TryParse(parts[0], out var year)) return false;
+        if (parts.Length == 1) return true;
+        if (!int.TryParse(parts[1], out var month) || month is < 1 or > 12) return false;
+        if (parts.Length == 2) return true;
+
+        return int.TryParse(parts[2], out var day) && day >= 1 && day <= DateTime.DaysInMonth(Math.Max(year, 1), month);
     }
 
     public static bool IsNewerMinor(JsonObject root)

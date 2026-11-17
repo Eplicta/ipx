@@ -127,7 +127,7 @@ public class ModelTests
     {
         var row = new IpxRow { Id = "r1", RowKind = IpxRowKind.CaseType, Registration = IpxRegistration.KeptOrdered, Confidence = IpxConfidence.Low };
 
-        Assert.Equal("caseType", (string)row.Node["rowKind"]);
+        Assert.Equal("case-type", (string)row.Node["rowKind"]);
         Assert.Equal("kept-ordered", (string)row.Node["registration"]);
         Assert.Equal("low", (string)row.Node["confidence"]);
     }

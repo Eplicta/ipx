@@ -6,7 +6,7 @@ IPX is an open format proposed by Eplicta. It is not a standard of any standards
 
 IPX is a JSON format for exchanging an information management plan (*informationshanteringsplan*): what a school or an authority keeps, where it is kept and for how long. It also carries the rules that municipalities and national bodies have published, so that plans can be compared and built from them.
 
-The words MUST, SHOULD and MAY are used as in RFC 2119.
+The words MUST, SHOULD and MAY are used as in RFC 2119 and RFC 8174.
 
 ## 1. At a glance
 
@@ -24,31 +24,33 @@ The words MUST, SHOULD and MAY are used as in RFC 2119.
 | Encoding | UTF-8 without a byte-order mark |
 | Line ends | LF recommended; any JSON whitespace is valid |
 | File extension | `.ipx.json` |
-| Media type | `application/vnd.fortdocs.ipx+json` (not registered) |
+| Media type | `application/vnd.eplicta.ipx+json` (not registered) |
 | Marker | `"format": "ipx"` and `"formatVersion": "1.0.0"` in every document |
-| Schema | `https://cloud.fortdocs.app/informationshanteringsplan/ipx/1.0.0/schema.json` |
+| Schema | `https://eplicta.github.io/ipx/schema/1.0.0/ipx.schema.json` |
 
 The schema URL is the intended address. A document MAY name it in `$schema` so that editors can validate while typing.
 
 ## 3. Conventions
 
-**Identifiers.** An `id` is a string of letters, digits and `. _ : -`, at most 128 characters, starting with a letter or digit. It is unique within the document and SHOULD stay the same when a new version of the same plan is written. A `uid` is a lower-case UUID that is unique everywhere. A `sourceId` is the identifier the thing had in the system or standard it came from. A `code` is what people see, such as `3.5.1`; it may change when rows are reordered, which is why it is not the identity.
+**Identifiers.** An `id` is a string of ASCII letters, digits and `. _ : -`, at most 128 characters, starting with a letter or digit. Ids are compared as written, letter by letter, and upper and lower case differ. An id is unique within its list: no two nodes, no two rows, no two systems, and so on, share an id, but a node and a row may. It SHOULD stay the same when a new version of the same plan is written. The node ids of a taxonomy MUST stay the same in every version of that taxonomy, and so does its `document.id`, whose versions are told apart by `document.version`, because the mappings of other documents refer to them. A `uid` is a lower-case UUID that is unique everywhere. A `sourceId` is the identifier the thing had in the system or standard it came from. A `code` is what people see, such as `3.5.1`; it may change when rows are reordered, which is why it is not the identity.
 
-**Dates.** `yyyy-MM-dd`. Where the day or month is not known, a year (`2026`) or a year and month (`2026-11`) is allowed, but only in the properties that say so (a *partial date*). Never an invented date.
+**Dates.** `yyyy-MM-dd`, and a real calendar date: `2026-02-30` is not a date. Where the day or month is not known, a year (`2026`) or a year and month (`2026-11`) is allowed, but only in the properties that say so (a *partial date*). A partial date stands for the whole period it names: as `validFrom` it means the first day of the period, and as `validTo` the last day, inclusive. Never an invented date. No time of day and no time zone is part of a date.
 
-**Unknown is `null`.** A property that is allowed to be `null` means *not known*. It never means zero, false or empty. A writer MUST NOT guess a date, a URL, a code or a retention period.
+**Null and absent.** A property that is absent has not been stated, or has its stated default. A property that is `null` has been looked for and is not known; only the properties that the schema allows to be `null` can be. Null never means zero, false or empty, and `validTo: null` means that no end is known. A reader treats an absent property and a property with its default value as equal. A writer MUST NOT guess a date, a URL, a code or a retention period.
 
 **Text.** A translatable value is an object keyed by language tag: `{ "sv": "...", "en": "..." }`. At least one language is required. A machine translation MUST NOT be presented as the original. Verbatim source text (`asWritten`) and notes are plain strings: the language of verbatim text is `document.language`, and the language of notes is `document.noteLanguage`, which defaults to `document.language`.
 
 **Order.** Array order is display order. There is no separate sort property. The order of properties in an object has no meaning.
 
-**Booleans and defaults.** A property that is absent has its stated default. Writers SHOULD omit a property rather than write its default.
+**Defaults.** Writers SHOULD omit a property rather than write its default. The defaults are: `rowKind` is `rule`, `ruleType` is `plan-rule`, `current` is true, `noteLanguage` is the document language, and `sha256Basis` is `file`. `personalData`, `outOfScope`, `triggerInferred` and `confirmedPublic` have no default: when absent they have not been stated, which is not the same as false.
 
-**Extension.** The only place for data that this specification does not define is an `ext` object, keyed by a reverse-domain name such as `app.fortdocs.research`. See section 11.
+**Extension.** The only place for data that this specification does not define is an `ext` object, keyed by a reverse-domain name of lower-case labels such as `app.fortdocs.research`. Every object this specification defines MAY carry an `ext`, except a `Text` object and `asWritten.cells`, whose keys are open already. See section 11.
 
 **Personal data.** Documents MUST NOT contain personal names. Contacts and responsibilities are roles and functional addresses.
 
-**Canonical form.** Where a hash of IPX content is needed, for example to see whether a preserved fragment is still current, it is computed over the JSON Canonicalization Scheme (RFC 8785) serialization of the value.
+**Canonical form and hashes.** Where a hash of IPX content is needed, for example to see whether a preserved fragment is still current, it is SHA-256 in lower-case hexadecimal over the JSON Canonicalization Scheme (RFC 8785) serialization of the value as written, so an explicit default gives another hash than an absent property. The hash of a file is over its bytes. `sha256Basis: text-extract` means the hash of the plain text extracted from the file, as UTF-8 with LF line ends, which can only be reproduced with the same extraction. `origins.content` is base64 (RFC 4648, standard alphabet, with padding) and `origins.sha256` is the hash of the decoded bytes. The arrays of a document are ordered, so the same values in another order hash differently.
+
+**Text and encoding.** Strings are compared as written. No Unicode normalisation is applied to ids, codes, text or `ext` keys, and line ends in verbatim text are kept. A reader SHOULD accept a leading byte-order mark; a writer MUST NOT write one. A property name that occurs twice in one object is an error, because RFC 8785 requires I-JSON. Language tags follow BCP 47, with a lower-case primary subtag.
 
 ## 4. Versioning and compatibility
 
@@ -56,9 +58,9 @@ The version is `major.minor.patch`.
 
 | Change | Bump |
 |---|---|
-| A property is removed, renamed or changes type; an existing value changes meaning; a required property is added | major |
-| A property, an enum value, or a document kind is added | minor |
-| Wording of the specification is clarified; the schema is corrected to match it | patch |
+| A property or an enum value is removed or renamed; a property changes type; an existing value changes meaning; a required property or a document kind is added; a constraint is tightened (a pattern, a length, a minimum, a closed value removed) | major |
+| A property or an enum value is added; a constraint is relaxed; a property is deprecated; a validator warning is added | minor |
+| Wording of the specification is clarified; the schema is corrected to match it without rejecting a document that was valid | patch |
 
 Rules for readers:
 
@@ -67,6 +69,7 @@ Rules for readers:
 3. A reader that meets an enum value it does not know keeps it as it was. Where the value matters to the reader's own logic it treats it as the neutral value (`unclear` for a disposition, `other` for a trigger); for any other enumeration it does not interpret the value.
 4. A reader MUST refuse a document of a major version it does not support, and a `kind` it does not know.
 5. A validator checks a document against the schema of the version the document declares. The schema forbids unknown properties and closes its enumerations on purpose, so that a misspelt property or value is found. When the document declares a newer minor version than the validator knows, the validator MUST NOT report unknown properties or unknown enumeration values as errors. It SHOULD warn that part of the document was not checked, and it MUST still report every other schema error and every error of section 10.
+6. A property or an enum value added in a minor version MUST be ignorable: it MUST NOT change the meaning of what version 1.0 defines. Whatever a reader would misread if it ignored the addition needs a major version.
 
 ## 5. The document
 
@@ -106,8 +109,8 @@ A `taxonomy` MUST NOT have rows. Rows of other kinds point into a taxonomy with 
 | `language` | language tag, required | Language of verbatim content. |
 | `noteLanguage` | language tag | Language of notes. |
 | `createdOn`, `updatedOn` | date | |
-| `validFrom`, `validTo` | partial date or `null` | When the content applies. |
-| `supersedes` | array of `{ id?, version?, ref? }` | What this document replaces. `ref` is a URI or a path. |
+| `validFrom`, `validTo` | partial date or `null` | When the content applies; `validTo` is the last day, inclusive. `null` means not known. |
+| `supersedes` | array of `{ id?, version?, ref? }` | What this document replaces. `ref` is a URI; a path on one machine is never part of a document. |
 | `coverage` | `complete`, `partial`, `none` | Whether the rules cover every school form the authority runs. |
 | `coverageNote` | string | The limits of the coverage. |
 | `taxonomy` | `{ id, version? }` | The taxonomy document that `mappings` point into. |
@@ -117,7 +120,7 @@ A `taxonomy` MUST NOT have rows. Rows of other kinds point into a taxonomy with 
 
 `municipality` is `{ code, name, county? }` where `code` is the four-digit kommun code. A `reference` has the municipality whose rules it holds. A `plan` has the municipality the organisation operates in.
 
-`organisation` is for a plan: `name`, `legalForm`, `forms` (school forms), `units` (name, kommun, code, forms, grades, `skolenhetskod`, `sourceUri`), `pupilTotal` (`value`, `basis`, `sourceId`, `note`), `regime` and `regimeNote`.
+`organisation` is for a plan: `name`, `legalForm`, `forms` (school forms), `units` (name, kommun, code, forms, grades, `skolenhetskod`, `sourceUri`), `pupilTotal` (`value`, `basis`, `source`, `note`), where `source` is the id of an entry in `provenance.sources`, `regime` and `regimeNote`.
 
 `regime` is one of:
 
@@ -167,9 +170,9 @@ A row says what is kept and for how long.
 |---|---|---|
 | `id` | id, required | |
 | `uid`, `sourceId` | | |
-| `rowKind` | `rule`, `process`, `recordType`, `caseType` | Default `rule`. A `rule` is a retention rule as published. A `process` states the retention of a whole node. A `recordType` and a `caseType` are types of record and of case in a plan. |
+| `rowKind` | `rule`, `process`, `record-type`, `case-type` | Default `rule`. A `rule` is a retention rule as published. A `process` states the retention of a whole node. A `record-type` and a `case-type` are types of record and of case in a plan. |
 | `plan` | id or `null` | The plan in `provenance.plans` the row is attributed to. |
-| `forms` | array of school forms, required | The forms the row applies to. May be empty. |
+| `forms` | array of school forms, required | The forms the row applies to. An empty list means that the forms are not stated. |
 | `name`, `description` | Text | |
 | `node` | id | The node in this document's tree the row sits under. |
 | `mappings` | array | How the row corresponds to nodes in the taxonomy (7.2). |
@@ -177,11 +180,11 @@ A row says what is kept and for how long.
 | `asWritten` | object | The source's wording (7.1). |
 | `registration` | `registered`, `kept-ordered` | Entered in the diary, or kept in order without being registered. |
 | `registrationText` | string | The source's own wording. |
-| `personalData` | boolean | Whether records contain personal data. |
+| `personalData` | boolean | Whether records contain personal data. Absent means not stated. |
 | `secrecy` | string | The name of a secrecy class. |
 | `system` | id | Where the records are kept. |
 | `references` | array | Codes in other schemes. |
-| `retention` | array of retention, required, at least one | What happens and when (7.3). |
+| `retention` | array of retention, required, at least one | What happens and when (7.3). A row whose source states no retention has one entry with `disposition: unclear`. |
 | `source` | source reference | Where in which source the row was read. |
 | `confidence` | `high`, `medium`, `low` | How sure the reader is of the normalisation. |
 | `current` | boolean | False when the row no longer applies to new documents. Default true. |
@@ -213,7 +216,7 @@ A row that covers several nodes maps to each of them. Several rows for one node 
 
 ### 7.3 Retention
 
-A row has one or more retention entries. A source that gives separate periods, for example for granted and refused cases, becomes several entries with an `outcome`, not several rows.
+A row has one or more retention entries. A source that gives separate periods, for example for granted and refused cases, becomes several entries with an `outcome`, not several rows. Several entries are alternatives, and each entry after the first MUST say when it applies with an `outcome`, a `condition` or a `qualifier`; several entries that say none of these make the row unreadable and it is treated as `unclear`. An entry with `qualifier: earliest` and one with `qualifier: latest` in the same row are read together as a range.
 
 | Property | Type | Meaning |
 |---|---|---|
@@ -236,8 +239,10 @@ A row has one or more retention entries. A source that gives separate periods, f
 
 | Value | Meaning |
 |---|---|
-| `from-creation` | From when the document was created or received. |
-| `year-end` | After the end of the year, calendar year or financial year. |
+| `from-creation` | From when the document was created. |
+| `from-receipt` | From when the document was received. |
+| `year-end` | After the end of the calendar year. |
+| `financial-year-end` | After the end of the financial year. |
 | `school-year-end` | After the end of the school year. |
 | `case-closed` | After the case was closed. |
 | `enrolment-end` | After the child or pupil left (placement ended, discharged, schooling ended). |
@@ -250,19 +255,19 @@ A row has one or more retention entries. A source that gives separate periods, f
 
 Rules for retention:
 
-1. Different triggers are never converted into each other. A reader compares periods only when the triggers are the same.
-2. `months` is given only when the source gives a period. `retain` has `trigger: none` and no period.
+1. Different triggers are never converted into each other. A reader compares periods only when the triggers are the same. A period whose trigger is `unspecified` MAY be compared with a period of any trigger, and a tool that does so SHOULD say that the comparison is uncertain.
+2. `months` is given only when the source gives a period. `retain` has no period. Its trigger is `none`, or the event that a later review or handover is counted from.
 3. *Gallras vid/efter* an event with no extra time is `dispose` with `months: null` and `trigger` set to the event.
 4. A plain period of N years in a plan that states what such a period counts from carries that trigger with `triggerInferred: true`. Without such a statement, the trigger is `unspecified`.
 5. *At the earliest N years* is `months` plus `qualifier: earliest`. *At the latest* is `qualifier: latest`.
 6. A row with several periods or conditions that cannot be split into entries is `unclear`, and its text is kept.
-7. If `period` and `months` are both given, `months` MUST be the period converted as above.
+7. If `period` and `months` are both given, `months` SHOULD be the period converted as above; a validator warns when it is not.
 
 The national guidance counts N years as N whole calendar years after the year the document was created or the case closed. A document that follows this convention uses `trigger: year-end`; a plan that copies the guidance without saying so stays `unspecified`.
 
 ## 8. Provenance
 
-`provenance` records where the content came from and what is known about it.
+`provenance` records where the content came from and what is known about it. Everything in it is optional. `sources`, `plans`, `missing` and `checks` describe the research behind a document that was read from published sources; an exchange of a plan between systems has no need of them. The required properties are `standard` for an origin; `on`, `from` and `to` for a conversion; `id` and `title` for a source; `id` and `name` for a plan; `id` and `kind` for a missing entry; and `on` and `outcome` for a check.
 
 * **`origins`**: the documents or systems this one was converted from: `{ standard, version?, mediaType?, uri?, sha256?, content?, note? }`. `standard` names what the original was: a standard, a format or a reverse-domain name. `content` is the original, base64-encoded, when it is small enough to keep.
 * **`conversions`**: each conversion the document has been through: `{ on, from, to, tool?, losses[] }`. A converter lists in `losses` what it could not carry.
@@ -273,7 +278,7 @@ The national guidance counts N years as N whole calendar years after the year th
   * `structure`: `klassa`, `school-vir`, `own`, `unknown`.
   * `delegatesTo`: `{ planId, topics[], note? }`, where a plan hands topics to another plan.
   * `inaktualitet`: `{ defined, text }`, whether and how the plan defines *vid inaktualitet*.
-  * `periodCounting`: `{ startsFrom, scope, statement, where, note }`, what a plain period of N years counts from, when the plan says so. `scope` is `all-rows` or `some-rows`.
+  * `periodCounting`: `{ startsFrom, scope, statement, where, note }`, what a plain period of N years counts from, when the plan says so. `startsFrom` is `year-end`. `scope` is `all-rows` or `some-rows`.
   * `assessment`: `{ level, note }`, the reviewer's view of how usable the plan is; `level` is `high`, `medium` or `low`.
 * **`missing`**: what is not usable yet and how to get it: `{ id, kind, forms, nodes, detail, nextStep, contact, request }`. `kind` is `plan-not-public`, `plan-not-found`, `site-unreachable`, `form-not-covered`, `delegated-plan-unpublished`, `plan-draft-only`, `text-unreadable`, `rules-vague`, `rows-placeholder`, `rows-not-extracted`, `newer-version-possible`, `source-needs-recheck` or `other`. `nextStep` is `recheck-homepage`, `contact-city`, `ask-archive`, `retry-later` or `none`. `contact` is `{ role, address }`: a role and a functional address, never a person.
 * **`checks`**: `{ on, outcome, note }` with `outcome` one of `extracted`, `unchanged`, `changed`, `new`, `unreachable`.
@@ -288,8 +293,8 @@ This is how a FortDocs classification scheme and the IPX format correspond. Expo
 | Process class: `Code`, `Name`, `Description`, `ParentId` | node: `code`, `title`, `description`, `parent` | The node `id` is a stable slug made once and kept. |
 | Process class: `CaseRegistration`, `RegisteredInSystemId` | node `caseRegistration`, `system` | |
 | Process class: retention rule | a row with `rowKind: process` and `node` set | |
-| Case type | row with `rowKind: caseType`, `node` set | |
-| Record type | row with `rowKind: recordType`, `node` set | `RegistrationMethod` becomes `registration`; `ContainsPersonalData` becomes `personalData`; the secrecy class becomes `secrecy`. |
+| Case type | row with `rowKind: case-type`, `node` set | |
+| Record type | row with `rowKind: record-type`, `node` set | `RegistrationMethod` becomes `registration`; `ContainsPersonalData` becomes `personalData`; the secrecy class becomes `secrecy`. |
 | Retention rule: `Disposition`, `RetentionMonths`, `LegalBasis`, `Key` | retention: `disposition`, `months`, `legalBasis`, `ruleKey` | FortDocs has only `retain` and `dispose`. Importing `handover`, `review` or `unclear` is lossy and is reported. FortDocs has no trigger, qualifier or condition; those are kept in `ext` on import. |
 | System | `systems` entry | |
 | Deactivated (`DeactivatedAt`) | `current: false`, or `validTo` on a node | |
@@ -300,19 +305,20 @@ Three levels, run in this order:
 
 1. **Schema.** The JSON Schema checks types, required properties, enum values, patterns and that no unknown property sits outside `ext`. Validators exist for most languages; any that supports JSON Schema draft 2020-12 will do.
 2. **Rules a schema cannot check.** Each is an error:
-   * Ids are unique within nodes, rows, systems, sources, plans and `missing`.
-   * `node.parent`, `node.system`, `row.node`, `row.system` and `organisation.pupilTotal.sourceId` refer to something that exists.
-   * `row.plan`, `row.source.ref` and `plan.sourceIds` refer to entries in `provenance`.
+   * Ids are unique within each of nodes, rows, systems, sources, plans and `missing`.
+   * `node.parent`, `node.system`, `row.node` and `row.system` refer to something that exists.
+   * `row.plan` refers to a plan, and `node.source.ref`, `row.source.ref`, `plan.sourceIds` and `organisation.pupilTotal.source` refer to sources, in `provenance`.
+   * Every date is a real calendar date.
    * The parent chain of a node does not loop.
    * A `taxonomy` has no rows.
 3. **Warnings.** These do not make a document invalid:
    * `months` does not match `period`.
-   * A `retain` entry has a period.
-   * A mapping points at a node that is not in the taxonomy.
+   * A `retain` entry has a period, in `period` or in `months`.
+   * A mapping points at a node that is not in the taxonomy. A validator can check this only when it is given the taxonomy.
    * A plan delegates to a plan that is not listed.
    * The document's minor version is newer than the validator knows.
 
-A validator MUST report errors and warnings separately, and MUST run the second level only on a document that passed the first.
+A validator MUST report errors and warnings separately, and MUST run the second level only on a document that passed the first. That a `reference` has a `municipality`, that a `plan` has an `organisation`, and that a row of kind `process`, `record-type` or `case-type` has a `node`, are expectations of the kinds and not checked.
 
 ## 11. Extension and round trips
 

@@ -6,7 +6,7 @@ The `conformance/` folder holds documents that every implementation of IPX 1.0.x
 
 | Outcome | What the implementation must do |
 |---|---|
-| `valid` | Read the document and find no errors. Warnings are allowed. |
+| `valid` | Read the document and find no errors. Warnings are allowed, and every code in the `warnings` list of the case must be among them. |
 | `refused` | Refuse to read it: it is not IPX, its major version is not supported, or its kind is unknown. |
 | `invalid` | Read it and find errors, with each code listed in the manifest among them. |
 

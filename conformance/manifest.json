@@ -1,12 +1,16 @@
 {
   "ipxConformance": 1,
-  "description": "Documents that every implementation of IPX 1.0.x must classify the same way. outcome valid: no errors. outcome refused: a reader must refuse to read it. outcome invalid: it can be read but has errors, and each listed code must be among them.",
+  "description": "Documents that every implementation of IPX 1.0.x must classify the same way. outcome valid: no errors, and every code in warnings is among the warnings. outcome refused: a reader must refuse to read it. outcome invalid: it can be read but has errors, and each listed code must be among them.",
   "codes": {
     "schema": "A structural error found by the JSON Schema.",
     "duplicate-id": "Two items in one list have the same id.",
     "missing-reference": "An id refers to something that does not exist.",
     "parent-loop": "The parent chain of a node loops.",
-    "taxonomy-has-rows": "A taxonomy document has rows."
+    "taxonomy-has-rows": "A taxonomy document has rows.",
+    "invalid-date": "A date is not a real calendar date.",
+    "newer-minor-version": "Warning: the document is of a newer minor version, so part of it was not checked.",
+    "retain-with-period": "Warning: a retain entry has a period.",
+    "months-mismatch": "Warning: the months are not the period converted to months."
   },
   "cases": [
     { "file": "valid/minimal-taxonomy.ipx.json", "outcome": "valid" },
@@ -16,12 +20,22 @@
     { "file": "refused/major-2.ipx.json", "outcome": "refused" },
     { "file": "refused/unknown-kind.ipx.json", "outcome": "refused" },
     { "file": "refused/not-ipx.json", "outcome": "refused" },
-    { "file": "invalid/bad-disposition.ipx.json", "outcome": "invalid", "codes": ["schema"] },
-    { "file": "invalid/row-without-retention.ipx.json", "outcome": "invalid", "codes": ["schema"] },
-    { "file": "invalid/unknown-property.ipx.json", "outcome": "invalid", "codes": ["schema"] },
-    { "file": "invalid/duplicate-row-id.ipx.json", "outcome": "invalid", "codes": ["duplicate-id"] },
-    { "file": "invalid/missing-plan-reference.ipx.json", "outcome": "invalid", "codes": ["missing-reference"] },
-    { "file": "invalid/parent-loop.ipx.json", "outcome": "invalid", "codes": ["parent-loop"] },
-    { "file": "invalid/taxonomy-with-rows.ipx.json", "outcome": "invalid", "codes": ["taxonomy-has-rows"] }
+    { "file": "invalid/bad-disposition.ipx.json", "outcome": "invalid", "codes": ["schema"]},
+    { "file": "invalid/row-without-retention.ipx.json", "outcome": "invalid", "codes": ["schema"]},
+    { "file": "invalid/unknown-property.ipx.json", "outcome": "invalid", "codes": ["schema"]},
+    { "file": "invalid/duplicate-row-id.ipx.json", "outcome": "invalid", "codes": ["duplicate-id"]},
+    { "file": "invalid/missing-plan-reference.ipx.json", "outcome": "invalid", "codes": ["missing-reference"]},
+    { "file": "invalid/parent-loop.ipx.json", "outcome": "invalid", "codes": ["parent-loop"]},
+    { "file": "invalid/taxonomy-with-rows.ipx.json", "outcome": "invalid", "codes": ["taxonomy-has-rows"]},
+    { "file": "valid/newer-minor-version.ipx.json", "outcome": "valid", "warnings": ["newer-minor-version"]},
+    { "file": "valid/retain-with-period.ipx.json", "outcome": "valid", "warnings": ["retain-with-period"]},
+    { "file": "valid/months-do-not-match-the-period.ipx.json", "outcome": "valid", "warnings": ["months-mismatch"]},
+    { "file": "valid/ext-on-nested-objects.ipx.json", "outcome": "valid" },
+    { "file": "valid/record-type-and-new-triggers.ipx.json", "outcome": "valid" },
+    { "file": "invalid/calendar-date-that-does-not-exist.ipx.json", "outcome": "invalid", "codes": ["invalid-date"]},
+    { "file": "invalid/node-source-not-in-provenance.ipx.json", "outcome": "invalid", "codes": ["missing-reference"]},
+    { "file": "invalid/unknown-enum-value-in-the-current-version.ipx.json", "outcome": "invalid", "codes": ["schema"]},
+    { "file": "invalid/unknown-property-on-a-nested-object.ipx.json", "outcome": "invalid", "codes": ["schema"]},
+    { "file": "invalid/mapping-node-is-not-an-id.ipx.json", "outcome": "invalid", "codes": ["schema"]}
   ]
 }

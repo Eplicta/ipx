@@ -1,0 +1,15 @@
+{
+  "format": "ipx",
+  "formatVersion": "1.0.0",
+  "kind": "plan",
+  "document": { "id": "33333333-3333-4333-8333-333333333305", "name": { "en": "Record type row and the triggers financial-year-end and from-receipt" }, "language": "sv" },
+  "nodes": [ { "id": "n1", "parent": null, "title": { "en": "Govern" } } ],
+  "rows": [
+    {
+      "id": "r1",
+      "forms": ["shared"],
+      "node": "n1", "rowKind": "record-type",
+      "retention": [ { "disposition": "dispose", "period": { "amount": 7, "unit": "year" }, "months": 84, "trigger": "financial-year-end" }, { "disposition": "dispose", "period": { "amount": 1, "unit": "year" }, "months": 12, "trigger": "from-receipt", "condition": "Unless the document is a duplicate." } ]
+    }
+  ]
+}

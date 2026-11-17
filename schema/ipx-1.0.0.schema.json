@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://cloud.fortdocs.app/informationshanteringsplan/ipx/1.0.0/schema.json",
+  "$id": "https://eplicta.github.io/ipx/schema/1.0.0/ipx.schema.json",
   "title": "IPX 1.0.0: Information Plan Exchange",
   "description": "A document in the IPX format: an information management plan, a municipality's published retention rules, a national recommendation, or a common classification tree. Everything not listed here belongs in an ext object, never next to the listed properties.",
   "type": "object",
@@ -102,7 +102,8 @@
       "properties": {
         "scheme": { "type": "string", "minLength": 1 },
         "code": { "type": "string", "minLength": 1 },
-        "title": { "type": "string" }
+        "title": { "type": "string" },
+        "ext": { "$ref": "#/$defs/Ext" }
       }
     },
     "Document": {
@@ -130,7 +131,8 @@
             "properties": {
               "id": { "$ref": "#/$defs/Uuid" },
               "version": { "type": "string" },
-              "ref": { "type": "string", "description": "A URI or path to the document that is replaced." }
+              "ref": { "type": "string", "description": "A URI of the document that is replaced." },
+              "ext": { "$ref": "#/$defs/Ext" }
             }
           }
         },
@@ -143,7 +145,8 @@
           "required": ["id"],
           "properties": {
             "id": { "$ref": "#/$defs/Uuid" },
-            "version": { "type": "string" }
+            "version": { "type": "string" },
+            "ext": { "$ref": "#/$defs/Ext" }
           }
         },
         "generator": {
@@ -152,7 +155,8 @@
           "required": ["name"],
           "properties": {
             "name": { "type": "string" },
-            "version": { "type": "string" }
+            "version": { "type": "string" },
+            "ext": { "$ref": "#/$defs/Ext" }
           }
         },
         "ext": { "$ref": "#/$defs/Ext" }
@@ -165,7 +169,8 @@
       "properties": {
         "code": { "type": "string", "pattern": "^[0-9]{4}$", "description": "The four-digit kommun code." },
         "name": { "type": "string" },
-        "county": { "type": "string" }
+        "county": { "type": "string" },
+        "ext": { "$ref": "#/$defs/Ext" }
       }
     },
     "Organisation": {
@@ -190,7 +195,8 @@
               "forms": { "$ref": "#/$defs/Forms" },
               "grades": { "type": "array", "items": { "type": "string" } },
               "skolenhetskod": { "type": "string" },
-              "sourceUri": { "type": ["string", "null"] }
+              "sourceUri": { "type": ["string", "null"] },
+              "ext": { "$ref": "#/$defs/Ext" }
             }
           }
         },
@@ -201,8 +207,9 @@
           "properties": {
             "value": { "type": "integer", "minimum": 0 },
             "basis": { "type": "string" },
-            "sourceId": { "$ref": "#/$defs/Id" },
-            "note": { "type": "string" }
+            "source": { "$ref": "#/$defs/Id", "description": "The id of the entry in provenance.sources the total was read from." },
+            "note": { "type": "string" },
+            "ext": { "$ref": "#/$defs/Ext" }
           }
         },
         "regime": { "enum": ["smaller-16f", "larger-osl", "public"], "description": "Which retention regime applies to the organisation." },
@@ -216,7 +223,8 @@
       "required": ["role", "duty"],
       "properties": {
         "role": { "type": "string" },
-        "duty": { "type": "string" }
+        "duty": { "type": "string" },
+        "ext": { "$ref": "#/$defs/Ext" }
       }
     },
     "Operator": {
@@ -226,7 +234,8 @@
       "properties": {
         "body": { "type": "string" },
         "forms": { "$ref": "#/$defs/Forms" },
-        "note": { "type": "string" }
+        "note": { "type": "string" },
+        "ext": { "$ref": "#/$defs/Ext" }
       }
     },
     "System": {
@@ -255,7 +264,8 @@
         "printedPage": { "type": ["integer", "null"], "description": "The page number printed on the page." },
         "continuesOnPage": { "type": "integer" },
         "section": { "type": "string" },
-        "locator": { "type": "string", "description": "Anything else that finds the place, such as a heading or a table." }
+        "locator": { "type": "string", "description": "Anything else that finds the place, such as a heading or a table." },
+        "ext": { "$ref": "#/$defs/Ext" }
       }
     },
     "Node": {
@@ -290,11 +300,12 @@
       "additionalProperties": false,
       "required": ["node", "relation"],
       "properties": {
-        "node": { "type": "string", "description": "The id of a taxonomy node." },
+        "node": { "$ref": "#/$defs/Id", "description": "The id of a taxonomy node." },
         "relation": {
           "enum": ["exact", "covers", "part", "similar"],
           "description": "exact: same thing. covers: the row is wider than the node. part: the row is only part of the node. similar: close but not the same."
-        }
+        },
+        "ext": { "$ref": "#/$defs/Ext" }
       }
     },
     "AsWritten": {
@@ -312,7 +323,8 @@
           "type": "object",
           "description": "Further columns of the source table, by column name.",
           "additionalProperties": { "type": "string" }
-        }
+        },
+        "ext": { "$ref": "#/$defs/Ext" }
       }
     },
     "Retention": {
@@ -333,13 +345,14 @@
           "required": ["amount", "unit"],
           "properties": {
             "amount": { "type": "number", "minimum": 0 },
-            "unit": { "enum": ["day", "month", "year"] }
+            "unit": { "enum": ["day", "month", "year"] },
+            "ext": { "$ref": "#/$defs/Ext" }
           }
         },
         "months": { "type": ["integer", "null"], "minimum": 0, "description": "The period in whole months, rounded up. Null when the source gives no period." },
         "trigger": {
-          "enum": ["from-creation", "year-end", "school-year-end", "case-closed", "enrolment-end", "decision-date", "superseded", "obsolete", "other", "unspecified", "none", null],
-          "description": "What the period counts from. Different triggers are never converted into each other. none belongs to retain. unspecified means the source gives a period but not what it counts from. Null means unknown."
+          "enum": ["from-creation", "from-receipt", "year-end", "financial-year-end", "school-year-end", "case-closed", "enrolment-end", "decision-date", "superseded", "obsolete", "other", "unspecified", "none", null],
+          "description": "What the period counts from. year-end is the end of the calendar year and financial-year-end the end of the financial year. from-creation counts from when the record was created and from-receipt from when it was received. Different triggers are never converted into each other. none belongs to retain. unspecified means the source gives a period but not what it counts from. Null means unknown."
         },
         "triggerText": { "type": "string", "description": "The source's own words for the trigger." },
         "triggerInferred": { "type": "boolean", "description": "True when the trigger comes from a general statement of the plan, not from the row." },
@@ -359,9 +372,10 @@
       "additionalProperties": false,
       "required": ["id", "title"],
       "properties": {
-        "id": { "type": "string" },
+        "id": { "$ref": "#/$defs/Id" },
         "title": { "type": "string" },
-        "form": { "$ref": "#/$defs/Form" }
+        "form": { "$ref": "#/$defs/Form" },
+        "ext": { "$ref": "#/$defs/Ext" }
       }
     },
     "Row": {
@@ -372,7 +386,7 @@
         "id": { "$ref": "#/$defs/Id" },
         "uid": { "$ref": "#/$defs/Uuid" },
         "sourceId": { "type": "string" },
-        "rowKind": { "enum": ["rule", "process", "recordType", "caseType"], "description": "rule: a retention rule as published. process: the retention of a whole node. recordType and caseType: a type of record or case in a plan. Defaults to rule." },
+        "rowKind": { "enum": ["rule", "process", "record-type", "case-type"], "description": "rule: a retention rule as published. process: the retention of a whole node. record-type and case-type: a type of record or case in a plan. Defaults to rule." },
         "plan": { "oneOf": [{ "$ref": "#/$defs/Id" }, { "type": "null" }], "description": "The id of the plan in provenance.plans that the row comes from." },
         "forms": { "$ref": "#/$defs/Forms" },
         "name": { "$ref": "#/$defs/Text" },
@@ -403,7 +417,8 @@
           "required": ["state"],
           "properties": {
             "state": { "type": "string" },
-            "detail": { "type": "string" }
+            "detail": { "type": "string" },
+            "ext": { "$ref": "#/$defs/Ext" }
           }
         },
         "outOfScope": { "type": "boolean", "description": "True for a row about something other than school activities." },
@@ -429,7 +444,8 @@
               "uri": { "type": "string" },
               "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
               "content": { "type": "string", "description": "The original, base64-encoded, when it is small enough to keep." },
-              "note": { "type": "string" }
+              "note": { "type": "string" },
+              "ext": { "$ref": "#/$defs/Ext" }
             }
           }
         },
@@ -445,14 +461,16 @@
               "from": { "type": "string" },
               "to": { "type": "string" },
               "tool": { "type": "string" },
-              "losses": { "type": "array", "items": { "type": "string" } }
+              "losses": { "type": "array", "items": { "type": "string" } },
+              "ext": { "$ref": "#/$defs/Ext" }
             }
           }
         },
         "sources": { "type": "array", "items": { "$ref": "#/$defs/Source" } },
         "plans": { "type": "array", "items": { "$ref": "#/$defs/SourcePlan" } },
         "missing": { "type": "array", "items": { "$ref": "#/$defs/Missing" } },
-        "checks": { "type": "array", "items": { "$ref": "#/$defs/Check" } }
+        "checks": { "type": "array", "items": { "$ref": "#/$defs/Check" } },
+        "ext": { "$ref": "#/$defs/Ext" }
       }
     },
     "Source": {
@@ -506,7 +524,8 @@
             "properties": {
               "planId": { "$ref": "#/$defs/Id" },
               "topics": { "type": "array", "items": { "type": "string" } },
-              "note": { "type": "string" }
+              "note": { "type": "string" },
+              "ext": { "$ref": "#/$defs/Ext" }
             }
           }
         },
@@ -516,7 +535,8 @@
           "additionalProperties": false,
           "properties": {
             "defined": { "type": ["boolean", "null"] },
-            "text": { "type": "string" }
+            "text": { "type": "string" },
+            "ext": { "$ref": "#/$defs/Ext" }
           }
         },
         "periodCounting": {
@@ -528,7 +548,8 @@
             "scope": { "enum": ["all-rows", "some-rows"] },
             "statement": { "type": "string" },
             "where": { "type": "string" },
-            "note": { "type": "string" }
+            "note": { "type": "string" },
+            "ext": { "$ref": "#/$defs/Ext" }
           }
         },
         "assessment": {
@@ -538,7 +559,8 @@
           "required": ["level"],
           "properties": {
             "level": { "$ref": "#/$defs/Confidence" },
-            "note": { "type": "string" }
+            "note": { "type": "string" },
+            "ext": { "$ref": "#/$defs/Ext" }
           }
         },
         "sourceIds": { "type": "array", "items": { "$ref": "#/$defs/Id" } },
@@ -568,13 +590,15 @@
               "required": ["role"],
               "properties": {
                 "role": { "type": "string" },
-                "address": { "type": ["string", "null"] }
+                "address": { "type": ["string", "null"] },
+                "ext": { "$ref": "#/$defs/Ext" }
               }
             },
             { "type": "null" }
           ]
         },
-        "request": { "type": "string" }
+        "request": { "type": "string" },
+        "ext": { "$ref": "#/$defs/Ext" }
       }
     },
     "Check": {
@@ -584,7 +608,8 @@
       "properties": {
         "on": { "$ref": "#/$defs/Date" },
         "outcome": { "enum": ["extracted", "unchanged", "changed", "new", "unreachable"] },
-        "note": { "type": "string" }
+        "note": { "type": "string" },
+        "ext": { "$ref": "#/$defs/Ext" }
       }
     }
   }

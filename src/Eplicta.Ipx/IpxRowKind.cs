@@ -5,6 +5,6 @@ public enum IpxRowKind
 {
     [IpxWire("rule")] Rule,
     [IpxWire("process")] Process,
-    [IpxWire("recordType")] RecordType,
-    [IpxWire("caseType")] CaseType
+    [IpxWire("record-type")] RecordType,
+    [IpxWire("case-type")] CaseType
 }

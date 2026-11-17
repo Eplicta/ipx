@@ -29,11 +29,12 @@ The codes are constants of `IpxIssueCodes` and do not change within a major vers
 | `missing-reference` | error | An id refers to something that does not exist: a parent, a system, a node, a plan in the provenance, a source. |
 | `parent-loop` | error | The parent chain of a node loops. |
 | `taxonomy-has-rows` | error | A taxonomy document has rows. |
+| `invalid-date` | error | A date is not a real calendar date, such as `2026-02-30` or the month `2027-13`. |
 | `months-mismatch` | warning | The months of a retention entry are not its period converted to months, counting a day as one thirtieth of a month and rounding up. |
-| `retain-with-period` | warning | A `retain` entry has a period. |
+| `retain-with-period` | warning | A `retain` entry has a period, in `period` or in `months`. |
 | `mapping-not-in-taxonomy` | warning | A mapping points at a node that is not in the taxonomy you gave. |
 | `delegates-to-unknown-plan` | warning | A plan hands topics to a plan that is not listed. |
-| `newer-minor-version` | warning | The document is of a newer minor version than this validator knows, so properties it added are not checked. |
+| `newer-minor-version` | warning | The document is of a newer minor version than this validator knows, so properties and enumeration values it added are not checked. Such a document is checked against the schema without the ban on unknown properties and without the closed enumerations, and every other error is still reported. |
 
 ## Checking mappings against a taxonomy
 

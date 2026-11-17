@@ -1,0 +1,16 @@
+{
+  "format": "ipx",
+  "formatVersion": "1.0.0",
+  "kind": "plan",
+  "document": { "id": "33333333-3333-4333-8333-333333333304", "name": { "en": "Extension data on nested objects" }, "language": "sv" },
+  "nodes": [ { "id": "n1", "parent": null, "title": { "en": "Govern" } } ],
+  "rows": [
+    {
+      "id": "r1",
+      "forms": ["shared"],
+      "node": "n1", "asWritten": { "text": "Gallras efter 2 år", "ext": { "app.example.source": { "cell": "B4" } } }, "mappings": [ { "node": "n1", "relation": "exact", "ext": { "app.example.source": { "confidence": 0.9 } } } ],
+      "retention": [ { "disposition": "dispose", "period": { "amount": 2, "unit": "year", "ext": { "app.example.source": { "written": "tva ar" } } }, "months": 24, "trigger": "from-receipt" } ]
+    }
+  ],
+  "provenance": { "ext": { "app.example.source": { "imported": true } } }
+}

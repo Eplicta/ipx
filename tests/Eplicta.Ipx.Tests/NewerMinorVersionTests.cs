@@ -98,4 +98,43 @@ public class NewerMinorVersionTests
 
         Assert.Contains(result.Errors, e => e.Code == IpxIssueCodes.MissingReference && e.Path == "/nodes/0/source/ref");
     }
+
+    [Theory]
+    [InlineData("2026-02-30")]
+    [InlineData("2026-04-31")]
+    [InlineData("2025-02-29")]
+    public void A_date_that_is_not_on_the_calendar_is_an_error(string date)
+    {
+        var result = Validate(n => n["document"]["updatedOn"] = date);
+
+        Assert.Contains(result.Errors, e => e.Code == IpxIssueCodes.InvalidDate && e.Path == "/document/updatedOn");
+    }
+
+    [Fact]
+    public void A_partial_date_with_a_month_that_does_not_exist_is_an_error()
+    {
+        var result = Validate(n => n["document"]["validFrom"] = "2027-13");
+
+        Assert.Contains(result.Errors, e => e.Code == IpxIssueCodes.InvalidDate);
+    }
+
+    [Theory]
+    [InlineData("2024-02-29")]
+    [InlineData("2027-12")]
+    [InlineData("2027")]
+    public void A_real_date_or_partial_date_is_accepted(string date)
+    {
+        var result = Validate(n => n["document"]["validFrom"] = date);
+
+        Assert.DoesNotContain(result.Errors, e => e.Code == IpxIssueCodes.InvalidDate);
+        Assert.True(result.IsValid, string.Join("; ", result.Errors));
+    }
+
+    [Fact]
+    public void Dates_inside_ext_are_left_alone()
+    {
+        var result = Validate(n => n["document"]["ext"] = new JsonObject { ["app.example"] = new JsonObject { ["updatedOn"] = "not a date" } });
+
+        Assert.DoesNotContain(result.Errors, e => e.Code == IpxIssueCodes.InvalidDate);
+    }
 }

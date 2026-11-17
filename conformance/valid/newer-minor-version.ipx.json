@@ -1,0 +1,15 @@
+{
+  "format": "ipx",
+  "formatVersion": "1.3.0",
+  "kind": "plan",
+  "document": { "id": "33333333-3333-4333-8333-333333333301", "name": { "en": "A document of a newer minor version" }, "language": "sv", "addedInOneThree": { "anything": true } },
+  "nodes": [ { "id": "n1", "parent": null, "title": { "en": "Govern" } } ],
+  "rows": [
+    {
+      "id": "r1",
+      "forms": ["shared"],
+      "node": "n1", "registration": "registered-in-a-later-version",
+      "retention": [ { "disposition": "dispose", "period": { "amount": 5, "unit": "year" }, "months": 60, "trigger": "calendar-year-end" } ]
+    }
+  ]
+}

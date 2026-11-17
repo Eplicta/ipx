@@ -1,0 +1,15 @@
+{
+  "format": "ipx",
+  "formatVersion": "1.0.0",
+  "kind": "plan",
+  "document": { "id": "33333333-3333-4333-8333-333333333302", "name": { "en": "A retain entry with a period" }, "language": "sv" },
+  "nodes": [ { "id": "n1", "parent": null, "title": { "en": "Govern" } } ],
+  "rows": [
+    {
+      "id": "r1",
+      "forms": ["shared"],
+      "node": "n1",
+      "retention": [ { "disposition": "retain", "period": { "amount": 5, "unit": "year" }, "months": 60, "trigger": "none" } ]
+    }
+  ]
+}

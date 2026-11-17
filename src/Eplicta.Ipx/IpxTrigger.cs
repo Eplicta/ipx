@@ -4,7 +4,9 @@ namespace Eplicta.Ipx;
 public enum IpxTrigger
 {
     [IpxWire("from-creation")] FromCreation,
+    [IpxWire("from-receipt")] FromReceipt,
     [IpxWire("year-end")] YearEnd,
+    [IpxWire("financial-year-end")] FinancialYearEnd,
     [IpxWire("school-year-end")] SchoolYearEnd,
     [IpxWire("case-closed")] CaseClosed,
     [IpxWire("enrolment-end")] EnrolmentEnd,
