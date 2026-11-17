@@ -12,6 +12,11 @@ on:
       - 'Eplicta.Ipx.sln'
       - '.github/workflows/publish.yml'
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'An exact version to publish from master, such as 1.0.0. Leave empty to publish the next version worked out from version.txt.'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -41,18 +46,33 @@ jobs:
 
       - name: Work out the version
         id: version
+        env:
+          EXACT_VERSION: ${{ inputs.version }}
         run: |
-          BASE="$(tr -d '[:space:]' < version.txt)"
-          if ! [[ "$BASE" =~ ^([0-9]+)\.([0-9]+)(-preview)?$ ]]; then
-            echo "version.txt must hold <major>.<minor> or <major>.<minor>-preview, not '$BASE'." >&2
-            exit 1
-          fi
-          if [[ -n "${BASH_REMATCH[3]}" ]]; then
-            VERSION="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.0-preview.${GITHUB_RUN_NUMBER}"
-            PRERELEASE=true
+          if [[ -n "$EXACT_VERSION" ]]; then
+            if ! [[ "$EXACT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+              echo "The version '$EXACT_VERSION' is not <major>.<minor>.<patch> with an optional -<prerelease>." >&2
+              exit 1
+            fi
+            if [[ "$GITHUB_REF" != "refs/heads/master" ]]; then
+              echo "An exact version can only be published from master, not from $GITHUB_REF." >&2
+              exit 1
+            fi
+            VERSION="$EXACT_VERSION"
+            if [[ "$VERSION" == *-* ]]; then PRERELEASE=true; else PRERELEASE=false; fi
           else
-            VERSION="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${GITHUB_RUN_NUMBER}"
-            PRERELEASE=false
+            BASE="$(tr -d '[:space:]' < version.txt)"
+            if ! [[ "$BASE" =~ ^([0-9]+)\.([0-9]+)(-preview)?$ ]]; then
+              echo "version.txt must hold <major>.<minor> or <major>.<minor>-preview, not '$BASE'." >&2
+              exit 1
+            fi
+            if [[ -n "${BASH_REMATCH[3]}" ]]; then
+              VERSION="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.0-preview.${GITHUB_RUN_NUMBER}"
+              PRERELEASE=true
+            else
+              VERSION="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${GITHUB_RUN_NUMBER}"
+              PRERELEASE=false
+            fi
           fi
           echo "value=$VERSION" >> "$GITHUB_OUTPUT"
           echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"

@@ -34,6 +34,18 @@ Version 1.x of the package reads and writes IPX 1.x. A new major version of the 
 
 Moving from `1.0-preview` to `1.0` is how the first stable version is published. Do it when the specification is no longer a draft; a stable version cannot be taken back, only unlisted.
 
+## Publishing an exact version
+
+The version worked out from `version.txt` always ends in the number of the run, so `version.txt` set to `1.0` publishes `1.0.7`, not `1.0.0`. To publish an exact version, such as the first stable `1.0.0`, run the `Publish` workflow by hand and give the version:
+
+```
+gh workflow run publish.yml --repo Eplicta/ipx --ref master -f version=1.0.0
+```
+
+The version must be `<major>.<minor>.<patch>` with an optional `-<prerelease>`, and the run must be on `master`. The workflow builds, tests, publishes and creates the GitHub release exactly as for an automatic version. A version with a hyphen is a prerelease on nuget.org and on GitHub.
+
+After a stable release, set `version.txt` to the next preview, such as `1.1-preview`, so that the automatic versions that follow are `1.1.0-preview.N` and sort above `1.0.0`.
+
 ## One-time setup
 
 The `Publish` workflow publishes with nuget.org Trusted Publishing, so there is no API key to store and nothing that expires.
