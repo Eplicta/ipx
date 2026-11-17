@@ -65,7 +65,9 @@ jobs:
         run: dotnet test --configuration Release --no-build
 
       - name: Pack
-        run: dotnet pack src/Eplicta.Ipx/Eplicta.Ipx.csproj --configuration Release --no-build --output artifacts -p:Version=${{ steps.version.outputs.value }}
+        run: |
+          dotnet pack src/Eplicta.Ipx/Eplicta.Ipx.csproj --configuration Release --no-build --output artifacts -p:Version=${{ steps.version.outputs.value }}
+          dotnet pack src/Eplicta.Ipx.Tool/Eplicta.Ipx.Tool.csproj --configuration Release --no-build --output artifacts -p:Version=${{ steps.version.outputs.value }}
 
       - name: Publish to nuget.org
         env:

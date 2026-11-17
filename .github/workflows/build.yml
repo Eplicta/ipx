@@ -44,7 +44,9 @@ jobs:
 
       - name: Pack
         if: matrix.os == 'ubuntu-latest'
-        run: dotnet pack src/Eplicta.Ipx/Eplicta.Ipx.csproj --configuration Release --no-build --output artifacts
+        run: |
+          dotnet pack src/Eplicta.Ipx/Eplicta.Ipx.csproj --configuration Release --no-build --output artifacts
+          dotnet pack src/Eplicta.Ipx.Tool/Eplicta.Ipx.Tool.csproj --configuration Release --no-build --output artifacts
 
       - name: Keep the package
         if: matrix.os == 'ubuntu-latest'

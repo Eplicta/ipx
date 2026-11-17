@@ -7,7 +7,7 @@ A new version of the package is published to nuget.org each time a change to the
 | Workflow | When | What |
 |---|---|---|
 | `Build` | Every push to `master` and every pull request | Restores, builds, runs the tests on .NET 8, 9, 10 and 11 on Linux and on Windows, and packs the package as a build artifact. Nothing is published. |
-| `Publish` | A push to `master` that changes `src/`, `schema/`, `version.txt` or `Directory.Build.props`, or a manual run | Works out the version, builds, tests, packs, publishes the package to nuget.org and creates a GitHub release with the packages, the specification and the schema attached. |
+| `Publish` | A push to `master` that changes `src/`, `schema/`, `version.txt` or `Directory.Build.props`, or a manual run | Works out the version, builds, tests, packs both packages (the library and the `ipx` tool), publishes them to nuget.org and creates a GitHub release with the packages, the specification and the schema attached. |
 
 A change that only touches the documentation, the specification text, the examples or the tests does not publish. Because pull requests run `Build` and not `Publish`, a pull request is where the tests have to pass before the merge; protect `master` and require the `Build` checks to make that a rule.
 
@@ -36,7 +36,7 @@ Moving from `1.0-preview` to `1.0` is how the first stable version is published.
 
 ## One-time setup
 
-The `Publish` workflow needs a repository secret named `NUGET_API_KEY`: a key from nuget.org that is allowed to push the package `Eplicta.Ipx`. Create the secret under *Settings, Secrets and variables, Actions*. A package id can only be pushed by a key whose glob pattern covers it, and nuget.org keys expire, so set a reminder for the expiry date. When the key has expired, the workflow fails at the push and the version is not published.
+The `Publish` workflow needs a repository secret named `NUGET_API_KEY`: a key from nuget.org that is allowed to push the packages `Eplicta.Ipx` and `Eplicta.Ipx.Tool`, so give it the glob pattern `Eplicta.Ipx*`. Create the secret under *Settings, Secrets and variables, Actions*. A package id can only be pushed by a key whose glob pattern covers it, and nuget.org keys expire, so set a reminder for the expiry date. When the key has expired, the workflow fails at the push and the version is not published.
 
 ## When a publish fails
 

@@ -10,4 +10,6 @@ The `Eplicta.Ipx` package for .NET 8, 9, 10 and 11:
 * Validates against the embedded schema and against the rules a schema cannot express, with stable issue codes and JSON Pointer paths.
 * Gives the canonical form of RFC 8785 for hashing.
 * `IpxBuilder` builds a document from code as one chain of calls, with factories for retention entries, copies of what is added, ids checked as they are added, properties written in the order of the schema, and `BuildValidated` for output that must be valid.
+* `IpxComparer` compares documents against a base node by node through a shared taxonomy, with deltas that never convert one trigger into another.
+* The `Eplicta.Ipx.Tool` package, the `ipx` command: validate, info, compare, coverage, gaps and missing.
 * Typed access to documents, nodes, rows, retention, mappings, references, source references municipality, organisation, responsibilities, operators, and provenance origins and conversions; everything else through `Node`.

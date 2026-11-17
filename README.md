@@ -15,6 +15,8 @@ IPX is an open format proposed by [Eplicta](https://github.com/Eplicta). It is n
 | [`examples/`](examples/) | Documents that validate against the schema. |
 | [`conformance/`](conformance/) | Valid, refused and invalid documents that every implementation should classify the same way. |
 | [`src/Eplicta.Ipx/`](src/Eplicta.Ipx/) | The .NET library: read, write and validate IPX. |
+| [`src/Eplicta.Ipx.Tool/`](src/Eplicta.Ipx.Tool/) | The `ipx` command-line tool: validate and compare. |
+| [`tools/`](tools/) | The legacy research viewer the comparison rules grew out of, for reference. |
 | [`tests/`](tests/) | The tests of the library, including the conformance corpus. |
 | [`docs/`](docs/) | Guides for the library, validation, the conformance corpus and releasing. |
 | [`CHANGELOG.md`](CHANGELOG.md) | What changed between versions. |
