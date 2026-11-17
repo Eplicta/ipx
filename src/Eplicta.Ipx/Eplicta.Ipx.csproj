@@ -12,6 +12,7 @@
     <RepositoryUrl>https://github.com/Eplicta/ipx</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <IncludeSymbols>true</IncludeSymbols>
@@ -27,6 +28,7 @@
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
     <EmbeddedResource Include="..\..\schema\ipx-1.0.0.schema.json" LogicalName="Eplicta.Ipx.ipx-1.0.0.schema.json" />
   </ItemGroup>
 

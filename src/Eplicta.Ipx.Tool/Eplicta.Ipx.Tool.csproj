@@ -16,6 +16,7 @@
     <RepositoryUrl>https://github.com/Eplicta/ipx</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -28,6 +29,7 @@
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
