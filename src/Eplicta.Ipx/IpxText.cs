@@ -22,6 +22,12 @@ public sealed class IpxText : IpxObject
 
     public IEnumerable<string> Languages => Node.Select(x => x.Key).ToArray();
 
+    /// <summary>Text in one language.</summary>
+    public static IpxText Create(string language, string text)
+    {
+        return Create((language, text));
+    }
+
     public static IpxText Create(params (string Language, string Text)[] items)
     {
         var text = new IpxText();

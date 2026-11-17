@@ -20,6 +20,7 @@ foreach (var row in document.Rows)
 File.WriteAllText("copy.ipx.json", IpxSerializer.ToJson(document));
 ```
 
+* `IpxBuilder` builds a document from code: `new IpxBuilder(IpxKind.Plan).SetName("sv", "Plan").SetLanguage("sv").AddNode(...).AddRow(...).BuildValidated()`.
 * A document keeps everything in it, including properties this version does not know, explicit nulls and the order of properties, so what you write back is what you read.
 * `IpxValidator` checks the JSON Schema first and the rules a schema cannot express second, and reports errors and warnings separately, each with a stable code and a JSON Pointer path.
 * `IpxCanonicalJson` gives the canonical form of RFC 8785 for hashing.

@@ -32,6 +32,22 @@ public sealed class IpxDocument : IpxObject
 
     public IpxDocumentInfo Document => GetObject("document", node => new IpxDocumentInfo(node));
 
+    public IpxMunicipality Municipality
+    {
+        get => GetObject("municipality", node => new IpxMunicipality(node));
+        set => SetObject("municipality", value);
+    }
+
+    public IpxOrganisation Organisation
+    {
+        get => GetObject("organisation", node => new IpxOrganisation(node));
+        set => SetObject("organisation", value);
+    }
+
+    public IpxList<IpxResponsibility> Responsibilities => GetList("responsibilities", node => new IpxResponsibility(node));
+
+    public IpxList<IpxOperator> Operators => GetList("operators", node => new IpxOperator(node));
+
     public IpxList<IpxSystem> Systems => GetList("systems", node => new IpxSystem(node));
 
     public IpxList<IpxNode> Nodes => GetList("nodes", node => new IpxNode(node));
@@ -45,12 +61,11 @@ public sealed class IpxDocument : IpxObject
     /// <summary>Starts a new, empty document of the current version.</summary>
     public static IpxDocument Create(IpxKind kind, string id, IpxText name, string language)
     {
-        var document = new IpxDocument(new JsonObject())
+        var document = new IpxDocument(new JsonObject { ["format"] = FormatName })
         {
             FormatVersion = CurrentVersion,
             Kind = kind
         };
-        document.Node["format"] = FormatName;
 
         var info = new IpxDocumentInfo { Id = id, Name = name, Language = language };
         document.Node["document"] = info.Node;

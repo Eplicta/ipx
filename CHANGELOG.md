@@ -9,4 +9,5 @@ The `Eplicta.Ipx` package for .NET 8, 9, 10 and 11:
 * Reads and writes documents, keeping unknown properties, explicit nulls, property order and the text of numbers, and writing only the escapes JSON requires.
 * Validates against the embedded schema and against the rules a schema cannot express, with stable issue codes and JSON Pointer paths.
 * Gives the canonical form of RFC 8785 for hashing.
-* Typed access to documents, nodes, rows, retention, mappings, references, source references and provenance origins and conversions; everything else through `Node`.
+* `IpxBuilder` builds a document from code as one chain of calls, with factories for retention entries, copies of what is added, ids checked as they are added, properties written in the order of the schema, and `BuildValidated` for output that must be valid.
+* Typed access to documents, nodes, rows, retention, mappings, references, source references municipality, organisation, responsibilities, operators, and provenance origins and conversions; everything else through `Node`.

@@ -56,6 +56,27 @@ A plan is a tree of nodes and a list of rows. Each row says what is kept and wha
 
 The complete document is in [`examples/school-plan.ipx.json`](examples/school-plan.ipx.json).
 
+## Building a document from code
+
+```csharp
+var plan = new IpxBuilder(IpxKind.Plan)
+    .SetName("sv", "Exempelskolans plan")
+    .SetLanguage("sv")
+    .AddNode("pupils", n => n.Title = IpxText.Create("sv", "Bedriva grundskola"))
+    .AddRow("admission", IpxRowKind.CaseType, r =>
+    {
+        r.Name = IpxText.Create("sv", "Ansökan om skolplats");
+        r.NodeId = "pupils";
+        r.Forms.Add(IpxForm.CompulsorySchool);
+        r.Retention.Add(IpxRetention.Dispose(6, IpxPeriodUnit.Year, IpxTrigger.CaseClosed));
+    })
+    .BuildValidated();
+
+File.WriteAllText("plan.ipx.json", IpxSerializer.ToJson(plan));
+```
+
+See [Building documents from code](docs/building-documents.md).
+
 ## Validating a document
 
 The schema works with any validator for JSON Schema draft 2020-12. With Python:

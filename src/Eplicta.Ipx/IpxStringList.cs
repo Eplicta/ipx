@@ -25,6 +25,9 @@ public sealed class IpxStringList : IReadOnlyList<string>
         Ensure().Add(item);
     }
 
+    /// <summary>Adds a school form by its wire name.</summary>
+    public void Add(IpxForm form) => Add(IpxWire.ToWire(form));
+
     public void Clear() => Existing()?.Clear();
 
     public bool Remove(string item)

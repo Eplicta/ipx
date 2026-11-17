@@ -103,4 +103,30 @@ public sealed class IpxRetention : IpxObject
     public IpxExt Ext => GetExt();
 
     public IpxExt EnsureExt() => EnsureExtension();
+
+    /// <summary>Kept, with no period. The trigger says what a later review or handover is counted from, and is none for a plain retain.</summary>
+    public static IpxRetention Retain(IpxTrigger trigger = IpxTrigger.None)
+    {
+        return new IpxRetention { Disposition = IpxDisposition.Retain, Trigger = trigger };
+    }
+
+    /// <summary>Disposed of when the period has passed, counted from the trigger. The months are filled in from the period.</summary>
+    public static IpxRetention Dispose(double amount, IpxPeriodUnit unit, IpxTrigger trigger)
+    {
+        var period = IpxPeriod.Create(amount, unit);
+        return new IpxRetention { Disposition = IpxDisposition.Dispose, Period = period, Months = period.ToMonths(), Trigger = trigger };
+    }
+
+    /// <summary>Disposed of at the trigger itself, with no period.</summary>
+    public static IpxRetention Dispose(IpxTrigger trigger)
+    {
+        return new IpxRetention { Disposition = IpxDisposition.Dispose, Trigger = trigger };
+    }
+
+    /// <summary>Handed over to another body, such as an archive authority, when the period has passed, counted from the trigger.</summary>
+    public static IpxRetention Handover(double amount, IpxPeriodUnit unit, IpxTrigger trigger)
+    {
+        var period = IpxPeriod.Create(amount, unit);
+        return new IpxRetention { Disposition = IpxDisposition.Handover, Period = period, Months = period.ToMonths(), Trigger = trigger };
+    }
 }

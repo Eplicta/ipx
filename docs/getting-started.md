@@ -44,20 +44,22 @@ r2 Refusal: Dispose, 24 months
 ## Build a document from code
 
 ```csharp
-var plan = IpxDocument.Create(IpxKind.Plan, Guid.NewGuid().ToString(), IpxText.Create(("sv", "Exempelskolans plan"), ("en", "Example School plan")), "sv");
-
-var governance = new IpxNode { Id = "governance", Code = "1" };
-governance.Title = IpxText.Create(("sv", "Styra verksamheten"), ("en", "Govern the operation"));
-plan.Nodes.Add(governance);
-
-var minutes = new IpxRow { Id = "board-minutes", RowKind = IpxRowKind.RecordType, NodeId = "governance", Registration = IpxRegistration.Registered };
-minutes.Name = IpxText.Create(("sv", "Styrelseprotokoll"), ("en", "Board minutes"));
-minutes.Forms.Add("shared");
-minutes.Retention.Add(new IpxRetention { Disposition = IpxDisposition.Retain, Trigger = IpxTrigger.None });
-plan.Rows.Add(minutes);
-
-var result = IpxValidator.Validate(plan);
+var plan = new IpxBuilder(IpxKind.Plan)
+    .SetName("sv", "Exempelskolans plan")
+    .SetName("en", "Example School plan")
+    .SetLanguage("sv")
+    .AddNode("governance", n => n.Title = IpxText.Create(("sv", "Styra verksamheten"), ("en", "Govern the operation")))
+    .AddRow("board-minutes", IpxRowKind.RecordType, r =>
+    {
+        r.Name = IpxText.Create(("sv", "Styrelseprotokoll"), ("en", "Board minutes"));
+        r.NodeId = "governance";
+        r.Forms.Add(IpxForm.Shared);
+        r.Retention.Add(IpxRetention.Retain());
+    })
+    .BuildValidated();
 ```
+
+`BuildValidated` throws when the result is not valid. [Building documents from code](building-documents.md) covers everything the builder does.
 
 ## Write it
 
@@ -71,5 +73,6 @@ Only what JSON requires is escaped. Every other character, including letters out
 
 ## Next
 
+* [Building documents from code](building-documents.md): the builder, the retention factories and validated builds.
 * [Working with the model](working-with-the-model.md): what the classes do and do not cover.
 * [Validation](validation.md): what the codes mean.

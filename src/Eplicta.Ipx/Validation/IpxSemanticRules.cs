@@ -5,8 +5,6 @@ namespace Eplicta.Ipx.Validation;
 internal static class IpxSemanticRules
 {
     private const int SupportedMinorVersion = 0;
-    private const double DaysPerMonth = 30;
-    private const double MonthsPerYear = 12;
 
     public static IpxValidationResult Check(JsonObject root, IpxValidationOptions options)
     {
@@ -135,7 +133,7 @@ internal static class IpxSemanticRules
             var entryPath = $"{path}/retention/{index}";
             var months = Whole(entry, "months");
 
-            if (entry["period"] is JsonObject period && months is not null && MonthsOf(period) is { } expected && expected != months)
+            if (entry["period"] is JsonObject period && months is not null && IpxPeriod.MonthsOf(period) is { } expected && expected != months)
             {
                 warnings.Add(new IpxIssue(IpxIssueCodes.MonthsMismatch, entryPath + "/months", $"The period is {expected} months, not {months}."));
             }
@@ -190,19 +188,6 @@ internal static class IpxSemanticRules
     {
         var value = Text(owner, property);
         if (value is not null && !ids.Contains(value)) errors.Add(new IpxIssue(IpxIssueCodes.MissingReference, $"{path}/{property}", $"'{value}' {reason}."));
-    }
-
-    private static int? MonthsOf(JsonObject period)
-    {
-        if (!(period["amount"] is JsonValue amountValue && amountValue.TryGetValue<double>(out var amount))) return null;
-
-        return Text(period, "unit") switch
-        {
-            "year" => (int)Math.Ceiling(amount * MonthsPerYear),
-            "month" => (int)Math.Ceiling(amount),
-            "day" => (int)Math.Ceiling(amount / DaysPerMonth),
-            _ => null
-        };
     }
 
     private static int? Whole(JsonObject owner, string property) => owner[property] is JsonValue value && value.TryGetValue<int>(out var number) ? number : null;
