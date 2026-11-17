@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net8.0;net9.0;net10.0;net11.0</TargetFrameworks>
+    <RootNamespace>Eplicta.Ipx.Tool</RootNamespace>
+    <AssemblyName>ipx</AssemblyName>
+    <Version>0.0.0-local</Version>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>ipx</ToolCommandName>
+    <PackageId>Eplicta.Ipx.Tool</PackageId>
+    <Description>The ipx command-line tool: validate IPX documents, and compare the retention of several plans against a base, node by node.</Description>
+    <PackageTags>ipx;informationshanteringsplan;retention;gallring;compare;dotnet-tool</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Eplicta/ipx</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Eplicta/ipx</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eplicta.Ipx\Eplicta.Ipx.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Eplicta.Ipx.Tests" />
+  </ItemGroup>
+
+</Project>

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Eplicta.Ipx\Eplicta.Ipx.csproj" />
+    <ProjectReference Include="..\..\src\Eplicta.Ipx.Tool\Eplicta.Ipx.Tool.csproj" />
   </ItemGroup>
 
   <ItemGroup>
