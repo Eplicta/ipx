@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IPX: Information Plan Exchange</title>
+<style>
+  :root { color-scheme: light dark; --green: #03552d; --teal: #10a9bb; }
+  body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 3rem auto; padding: 0 1rem; line-height: 1.5; }
+  h1 { color: var(--green); }
+  @media (prefers-color-scheme: dark) { h1 { color: #7fd6a6; } }
+  a { color: var(--teal); }
+  code { background: #8882; padding: 0.1rem 0.3rem; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>IPX: Information Plan Exchange</h1>
+<p>IPX is a JSON format for exchanging an information management plan (<em>informationshanteringsplan</em>) between systems: what an organisation keeps, where it is kept and for how long. It is an open format proposed by Eplicta.</p>
+<ul>
+  <li><a href="https://github.com/Eplicta/ipx/blob/master/spec/ipx-spec.md">The specification</a></li>
+  <li><a href="schema/1.0.0/ipx.schema.json">The JSON Schema, version 1.0.0</a> (<code>https://eplicta.github.io/ipx/schema/1.0.0/ipx.schema.json</code>)</li>
+  <li><a href="https://github.com/Eplicta/ipx/blob/master/examples/school-plan.ipx.json">An example document</a></li>
+  <li><a href="https://github.com/Eplicta/ipx">The repository</a>, with the conformance corpus and the .NET library</li>
+  <li><a href="https://www.nuget.org/packages/Eplicta.Ipx">Eplicta.Ipx</a> and <a href="https://www.nuget.org/packages/Eplicta.Ipx.Tool">Eplicta.Ipx.Tool</a> on nuget.org</li>
+</ul>
+</body>
+</html>
