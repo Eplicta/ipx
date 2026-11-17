@@ -1,0 +1,47 @@
+{
+  "format": "ipx",
+  "formatVersion": "1.0.0",
+  "kind": "reference",
+  "document": {
+    "id": "33333333-3333-4333-8333-333333333333",
+    "name": { "en": "Invented municipality: retention rules" },
+    "language": "sv",
+    "noteLanguage": "en",
+    "coverage": "partial",
+    "coverageNote": "Only the committee plan has been read.",
+    "taxonomy": { "id": "44444444-4444-4444-8444-444444444444" }
+  },
+  "municipality": { "code": "9999", "name": "Invented", "county": "Nowhere" },
+  "rows": [
+    {
+      "id": "r1",
+      "plan": "p1",
+      "forms": ["compulsory-school"],
+      "asWritten": { "code": "4.1", "heading": "Elevakt", "text": "Elevakt gallras 5 år efter avslutad skolgång", "page": 12 },
+      "mappings": [ { "node": "compulsory-school.pupil-file", "relation": "exact" } ],
+      "retention": [
+        { "disposition": "dispose", "period": { "amount": 5, "unit": "year" }, "months": 60, "trigger": "enrolment-end" }
+      ],
+      "source": { "ref": "s1", "page": 12 },
+      "confidence": "high"
+    },
+    {
+      "id": "r2",
+      "plan": "p1",
+      "forms": ["shared"],
+      "asWritten": { "text": "Vid inaktualitet" },
+      "retention": [ { "disposition": "dispose", "months": null, "trigger": "obsolete" } ],
+      "source": { "ref": "s1", "page": 3 },
+      "confidence": "medium"
+    }
+  ],
+  "provenance": {
+    "sources": [
+      { "id": "s1", "uri": "https://example.org/plan.pdf", "title": "Informationshanteringsplan", "kind": "plan-pdf", "publishedDate": "2026-05", "publishedDateBasis": "document-metadata", "lastFetchedAt": "2026-11-17", "fetchedBasis": "verified", "sha256": null }
+    ],
+    "plans": [
+      { "id": "p1", "name": "Informationshanteringsplan", "scope": "namnd", "forms": ["compulsory-school", "shared"], "status": "text-public", "structure": "own", "sourceIds": ["s1"], "assessment": { "level": "medium", "note": "Readable, a few vague rows." } }
+    ],
+    "checks": [ { "on": "2026-11-17", "outcome": "extracted" } ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "format": "ipx",
+  "formatVersion": "1.0.0",
+  "kind": "plan",
+  "document": {
+    "id": "22222222-2222-4222-8222-222222222222",
+    "name": { "en": "Minimal plan" },
+    "language": "sv"
+  },
+  "nodes": [
+    { "id": "n1", "parent": null, "title": { "en": "Govern" } }
+  ],
+  "rows": [
+    {
+      "id": "r1",
+      "forms": ["shared"],
+      "node": "n1",
+      "retention": [ { "disposition": "retain", "trigger": "none", "months": null } ]
+    }
+  ]
+}

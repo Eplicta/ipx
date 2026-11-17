@@ -4,7 +4,7 @@ IPX is a JSON format for exchanging an information management plan (*information
 
 IPX is an open format proposed by [Eplicta](https://github.com/Eplicta). It is not a standard of any standards body, and nobody else has adopted it yet.
 
-**Status: version 1.0.0, draft.** The specification and the schema are written and tested against a corpus of 11,230 rows. They have not been released, and they may still change before 1.0.0 is tagged.
+**Status: version 1.0.0, draft.** The specification, the schema and the .NET library are written and tested against a corpus of 11,230 rows. Nothing has been released yet, and the format may still change before 1.0.0 is tagged.
 
 ## What is here
 
@@ -13,9 +13,26 @@ IPX is an open format proposed by [Eplicta](https://github.com/Eplicta). It is n
 | [`spec/ipx-spec.md`](spec/ipx-spec.md) | The full specification: conventions, versioning, every property, the retention model, provenance, validation, round trips. |
 | [`schema/ipx-1.0.0.schema.json`](schema/ipx-1.0.0.schema.json) | A JSON Schema (draft 2020-12) for IPX 1.0.0. |
 | [`examples/`](examples/) | Documents that validate against the schema. |
+| [`conformance/`](conformance/) | Valid, refused and invalid documents that every implementation should classify the same way. |
+| [`src/Eplicta.Ipx/`](src/Eplicta.Ipx/) | The .NET library: read, write and validate IPX. |
+| [`tests/`](tests/) | The tests of the library, including the conformance corpus. |
+| [`docs/`](docs/) | Guides for the library, validation, the conformance corpus and releasing. |
 | [`CHANGELOG.md`](CHANGELOG.md) | What changed between versions. |
 
-A .NET library that reads, writes and validates IPX is planned and will live under `src/`. It is not written yet.
+## The .NET library
+
+`Eplicta.Ipx` targets .NET 8, 9 and 10. Once a version is published it is installed with:
+
+```
+dotnet add package Eplicta.Ipx
+```
+
+```csharp
+var document = IpxSerializer.Parse(File.ReadAllText("plan.ipx.json"));
+var result = IpxValidator.Validate(document);
+```
+
+See [Getting started](docs/getting-started.md). The library keeps everything in a document it does not understand, so what you write back is what you read.
 
 ## A first look
 
@@ -75,7 +92,7 @@ IPX does not replace Riksarkivet's schemas, Noark 5, MoReq2010 or RiC-O. They ex
 ## Licence
 
 * The specification, the schema and the examples (`spec/`, `schema/`, `examples/`) are licensed under [Creative Commons Attribution 4.0 International](spec/LICENSE).
-* Code, when it is added, is licensed under the [MIT licence](LICENSE).
+* The code (`src/`, `tests/` and the workflows) is licensed under the [MIT licence](LICENSE).
 
 ## Feedback
 

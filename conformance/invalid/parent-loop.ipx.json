@@ -1,0 +1,10 @@
+{
+  "format": "ipx",
+  "formatVersion": "1.0.0",
+  "kind": "taxonomy",
+  "document": { "id": "99999999-9999-4999-8999-999999999996", "name": { "en": "Nodes that are each other's parent" }, "language": "sv" },
+  "nodes": [
+    { "id": "a", "parent": "b", "title": { "en": "A" } },
+    { "id": "b", "parent": "a", "title": { "en": "B" } }
+  ]
+}

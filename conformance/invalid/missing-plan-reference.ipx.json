@@ -1,0 +1,12 @@
+{
+  "format": "ipx",
+  "formatVersion": "1.0.0",
+  "kind": "reference",
+  "document": { "id": "99999999-9999-4999-8999-999999999995", "name": { "en": "Row points at a plan that is not listed" }, "language": "sv" },
+  "rows": [
+    { "id": "r1", "plan": "p9", "forms": ["shared"], "retention": [ { "disposition": "retain" } ] }
+  ],
+  "provenance": {
+    "plans": [ { "id": "p1", "name": "The only plan" } ]
+  }
+}

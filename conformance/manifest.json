@@ -1,0 +1,27 @@
+{
+  "ipxConformance": 1,
+  "description": "Documents that every implementation of IPX 1.0.x must classify the same way. outcome valid: no errors. outcome refused: a reader must refuse to read it. outcome invalid: it can be read but has errors, and each listed code must be among them.",
+  "codes": {
+    "schema": "A structural error found by the JSON Schema.",
+    "duplicate-id": "Two items in one list have the same id.",
+    "missing-reference": "An id refers to something that does not exist.",
+    "parent-loop": "The parent chain of a node loops.",
+    "taxonomy-has-rows": "A taxonomy document has rows."
+  },
+  "cases": [
+    { "file": "valid/minimal-taxonomy.ipx.json", "outcome": "valid" },
+    { "file": "valid/minimal-plan.ipx.json", "outcome": "valid" },
+    { "file": "valid/reference-with-provenance.ipx.json", "outcome": "valid" },
+    { "file": "valid/extra-data-in-ext.ipx.json", "outcome": "valid" },
+    { "file": "refused/major-2.ipx.json", "outcome": "refused" },
+    { "file": "refused/unknown-kind.ipx.json", "outcome": "refused" },
+    { "file": "refused/not-ipx.json", "outcome": "refused" },
+    { "file": "invalid/bad-disposition.ipx.json", "outcome": "invalid", "codes": ["schema"] },
+    { "file": "invalid/row-without-retention.ipx.json", "outcome": "invalid", "codes": ["schema"] },
+    { "file": "invalid/unknown-property.ipx.json", "outcome": "invalid", "codes": ["schema"] },
+    { "file": "invalid/duplicate-row-id.ipx.json", "outcome": "invalid", "codes": ["duplicate-id"] },
+    { "file": "invalid/missing-plan-reference.ipx.json", "outcome": "invalid", "codes": ["missing-reference"] },
+    { "file": "invalid/parent-loop.ipx.json", "outcome": "invalid", "codes": ["parent-loop"] },
+    { "file": "invalid/taxonomy-with-rows.ipx.json", "outcome": "invalid", "codes": ["taxonomy-has-rows"] }
+  ]
+}

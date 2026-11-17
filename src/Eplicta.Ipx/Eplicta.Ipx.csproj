@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <RootNamespace>Eplicta.Ipx</RootNamespace>
+    <Version>0.0.0-local</Version>
+    <PackageId>Eplicta.Ipx</PackageId>
+    <Description>Reads, writes and validates IPX, the Information Plan Exchange format for information management plans (informationshanteringsplan). Keeps everything it does not understand, so a document survives a round trip unchanged.</Description>
+    <PackageTags>ipx;informationshanteringsplan;information-management;retention;gallring;archives;json</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Eplicta/ipx</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Eplicta/ipx</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <EmbeddedResource Include="..\..\schema\ipx-1.0.0.schema.json" LogicalName="Eplicta.Ipx.ipx-1.0.0.schema.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JsonSchema.Net" Version="9.7.0" />
+  </ItemGroup>
+
+</Project>

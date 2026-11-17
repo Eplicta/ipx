@@ -1,0 +1,9 @@
+{
+  "format": "ipx",
+  "formatVersion": "1.0.0",
+  "kind": "plan",
+  "document": { "id": "99999999-9999-4999-8999-999999999991", "name": { "en": "Bad disposition" }, "language": "sv" },
+  "rows": [
+    { "id": "r1", "forms": ["shared"], "retention": [ { "disposition": "burn" } ] }
+  ]
+}

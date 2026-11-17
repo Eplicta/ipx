@@ -1,0 +1,20 @@
+{
+  "format": "ipx",
+  "formatVersion": "1.0.0",
+  "kind": "plan",
+  "document": {
+    "id": "55555555-5555-4555-8555-555555555555",
+    "name": { "en": "Plan with extra data" },
+    "language": "sv",
+    "validFrom": null
+  },
+  "rows": [
+    {
+      "id": "r1",
+      "forms": [],
+      "retention": [ { "disposition": "retain", "months": null, "trigger": null, "ext": { "org.example.vendor": { "legacyCode": 7 } } } ],
+      "ext": { "org.example.vendor": { "importedFrom": "system-a", "tags": ["x", "y"] } }
+    }
+  ],
+  "ext": { "org.example.vendor": { "exportedAt": "2026-11-17T08:00:00+01:00" } }
+}
