@@ -64,9 +64,9 @@ Rules for readers:
 
 1. A reader that supports version 1.x MUST accept any 1.y.z document, including one with a newer minor version than it knows.
 2. A reader MUST keep unknown properties and unknown `ext` content when it saves the document. It MUST NOT drop them silently.
-3. A reader that meets an enum value it does not know treats it as the neutral value (`unclear` for a disposition, `other` for a trigger) for its own logic and keeps the original.
+3. A reader that meets an enum value it does not know keeps it as it was. Where the value matters to the reader's own logic it treats it as the neutral value (`unclear` for a disposition, `other` for a trigger); for any other enumeration it does not interpret the value.
 4. A reader MUST refuse a document of a major version it does not support, and a `kind` it does not know.
-5. A document SHOULD be validated against the schema of the version it declares. The schema forbids unknown properties on purpose, so that a misspelt property is found. A reader of a newer minor version therefore ignores `additionalProperties` errors from an older schema.
+5. A validator checks a document against the schema of the version the document declares. The schema forbids unknown properties and closes its enumerations on purpose, so that a misspelt property or value is found. When the document declares a newer minor version than the validator knows, the validator MUST NOT report unknown properties or unknown enumeration values as errors. It SHOULD warn that part of the document was not checked, and it MUST still report every other schema error and every error of section 10.
 
 ## 5. The document
 

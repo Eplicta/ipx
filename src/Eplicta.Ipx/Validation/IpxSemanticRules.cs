@@ -37,7 +37,7 @@ internal static class IpxSemanticRules
         var planIds = Ids(plans);
         var taxonomyIds = options?.TaxonomyNodeIds is null ? null : new HashSet<string>(options.TaxonomyNodeIds, StringComparer.Ordinal);
 
-        CheckNodes(nodes, nodeIds, systemIds, errors);
+        CheckNodes(nodes, nodeIds, systemIds, sourceIds, errors);
         CheckRows(rows, nodeIds, systemIds, planIds, sourceIds, taxonomyIds, errors, warnings);
         CheckPlans(plans, planIds, sourceIds, errors, warnings);
         CheckPupilTotal(root, sourceIds, errors);
@@ -56,7 +56,7 @@ internal static class IpxSemanticRules
         }
     }
 
-    private static void CheckNodes(List<JsonObject> nodes, HashSet<string> nodeIds, HashSet<string> systemIds, List<IpxIssue> errors)
+    private static void CheckNodes(List<JsonObject> nodes, HashSet<string> nodeIds, HashSet<string> systemIds, HashSet<string> sourceIds, List<IpxIssue> errors)
     {
         var parents = new Dictionary<string, string>(StringComparer.Ordinal);
         for (var index = 0; index < nodes.Count; index++)
@@ -69,6 +69,8 @@ internal static class IpxSemanticRules
 
             var system = Text(nodes[index], "system");
             if (system is not null && !systemIds.Contains(system)) errors.Add(new IpxIssue(IpxIssueCodes.MissingReference, $"/nodes/{index}/system", $"The system '{system}' does not exist."));
+
+            if (nodes[index]["source"] is JsonObject source) Require(source, "ref", sourceIds, $"/nodes/{index}/source", errors, "is not in provenance.sources");
         }
 
         CheckParentLoops(nodes, parents, errors);
@@ -138,9 +140,10 @@ internal static class IpxSemanticRules
                 warnings.Add(new IpxIssue(IpxIssueCodes.MonthsMismatch, entryPath + "/months", $"The period is {expected} months, not {months}."));
             }
 
-            if (Text(entry, "disposition") == "retain" && months is not null)
+            if (Text(entry, "disposition") == "retain" && (months is not null || entry["period"] is JsonObject))
             {
-                warnings.Add(new IpxIssue(IpxIssueCodes.RetainWithPeriod, entryPath + "/months", "A retain entry has a period."));
+                var property = entry["period"] is JsonObject ? "period" : "months";
+                warnings.Add(new IpxIssue(IpxIssueCodes.RetainWithPeriod, $"{entryPath}/{property}", "A retain entry has a period."));
             }
         }
     }
@@ -177,11 +180,16 @@ internal static class IpxSemanticRules
 
     private static void CheckVersion(JsonObject root, List<IpxIssue> warnings)
     {
-        var parts = (Text(root, "formatVersion") ?? "").Split('.');
-        if (parts.Length == 3 && int.TryParse(parts[1], out var minor) && minor > SupportedMinorVersion)
+        if (IsNewerMinor(root))
         {
-            warnings.Add(new IpxIssue(IpxIssueCodes.NewerMinorVersion, "/formatVersion", $"Version {string.Join('.', parts)} is newer than this validator knows; properties it added are not checked."));
+            warnings.Add(new IpxIssue(IpxIssueCodes.NewerMinorVersion, "/formatVersion", $"Version {Text(root, "formatVersion")} is newer than this validator knows; properties and values it added are not checked."));
         }
+    }
+
+    public static bool IsNewerMinor(JsonObject root)
+    {
+        var parts = (Text(root, "formatVersion") ?? "").Split('.');
+        return parts.Length == 3 && parts[0] == "1" && int.TryParse(parts[1], out var minor) && minor > SupportedMinorVersion;
     }
 
     private static void Require(JsonObject owner, string property, HashSet<string> ids, string path, List<IpxIssue> errors, string reason = "does not exist")
