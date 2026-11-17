@@ -6,7 +6,7 @@ A new version of the package is published when a version tag is pushed. Nothing 
 
 | Workflow | When | What |
 |---|---|---|
-| `Build` | Every push to `main` and every pull request | Restores, builds, runs the tests on .NET 8, 9 and 10 on Linux and on Windows, and packs the package as a build artifact. |
+| `Build` | Every push to `main` and every pull request | Restores, builds, runs the tests on .NET 8, 9, 10 and 11 on Linux and on Windows, and packs the package as a build artifact. |
 | `Release` | A tag that starts with `v` | Reads the version from the tag, builds, tests, packs, publishes the package to nuget.org and creates a GitHub release with the packages, the specification and the schema attached. |
 
 ## Publishing a version

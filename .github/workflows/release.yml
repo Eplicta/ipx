@@ -24,6 +24,7 @@ jobs:
             8.0.x
             9.0.x
             10.0.x
+            11.0.x
 
       - name: Read the version from the tag
         id: version
@@ -46,7 +47,7 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore -p:Version=${{ steps.version.outputs.value }}
 
-      - name: Test on .NET 8, 9 and 10
+      - name: Test on .NET 8, 9, 10 and 11
         run: dotnet test --configuration Release --no-build
 
       - name: Pack

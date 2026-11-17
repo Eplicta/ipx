@@ -1,6 +1,6 @@
 # Getting started
 
-`Eplicta.Ipx` reads, writes and validates IPX documents. It targets .NET 8, 9 and 10 and depends only on `JsonSchema.Net`.
+`Eplicta.Ipx` reads, writes and validates IPX documents. It targets .NET 8, 9, 10 and 11 and depends only on `JsonSchema.Net`.
 
 ```
 dotnet add package Eplicta.Ipx

@@ -21,7 +21,7 @@ IPX is an open format proposed by [Eplicta](https://github.com/Eplicta). It is n
 
 ## The .NET library
 
-`Eplicta.Ipx` targets .NET 8, 9 and 10. Once a version is published it is installed with:
+`Eplicta.Ipx` targets .NET 8, 9, 10 and 11. Once a version is published it is installed with:
 
 ```
 dotnet add package Eplicta.Ipx

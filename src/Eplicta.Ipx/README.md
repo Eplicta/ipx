@@ -25,4 +25,4 @@ File.WriteAllText("copy.ipx.json", IpxSerializer.ToJson(document));
 * `IpxCanonicalJson` gives the canonical form of RFC 8785 for hashing.
 * Everything the typed classes do not cover is reachable through the `Node` property of each class.
 
-Targets .NET 8, 9 and 10. Licensed under the MIT licence.
+Targets .NET 8, 9, 10 and 11. Licensed under the MIT licence.
