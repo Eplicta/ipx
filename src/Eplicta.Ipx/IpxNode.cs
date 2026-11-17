@@ -69,6 +69,20 @@ public sealed class IpxNode : IpxObject
         set => SetEnum("form", value);
     }
 
+    /// <summary>When the node starts to apply, as a date or a partial date. A node that always applied has none.</summary>
+    public string ValidFrom
+    {
+        get => GetString("validFrom");
+        set => SetString("validFrom", value);
+    }
+
+    /// <summary>The last day the node applies, inclusive, as a date or a partial date.</summary>
+    public string ValidTo
+    {
+        get => GetString("validTo");
+        set => SetString("validTo", value);
+    }
+
     public IpxText Title
     {
         get => GetText("title");

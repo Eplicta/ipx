@@ -108,7 +108,7 @@ public class BuilderTests
 
         Assert.Equal(["format", "formatVersion", "kind", "document", "systems", "nodes", "rows"], document.Node.Select(x => x.Key));
         Assert.Equal(["id", "key", "name", "language", "validFrom"], document.Document.Node.Select(x => x.Key));
-        Assert.Equal(["id", "rowKind", "name", "node", "registration", "retention"], document.Rows[0].Node.Select(x => x.Key));
+        Assert.Equal(["id", "rowKind", "forms", "name", "node", "registration", "retention"], document.Rows[0].Node.Select(x => x.Key));
     }
 
     [Fact]
@@ -311,5 +311,53 @@ public class BuilderTests
     public void Text_in_one_language_can_be_made_in_one_call()
     {
         Assert.Equal("Hej", IpxText.Create("sv", "Hej")["sv"]);
+    }
+
+    [Fact]
+    public void A_row_without_forms_gets_an_empty_list_so_it_is_valid()
+    {
+        var document = Minimal().AddNode("n1", n => n.Title = IpxText.Create("en", "Node")).AddRow("r1", IpxRowKind.Process, r =>
+        {
+            r.NodeId = "n1";
+            r.Retention.Add(IpxRetention.Retain());
+        }).BuildValidated();
+
+        Assert.Empty(document.Rows[0].Forms);
+        Assert.True(document.Rows[0].Has("forms"));
+    }
+
+    [Fact]
+    public void A_node_has_typed_validity_dates()
+    {
+        var document = Minimal().AddNode("n1", n =>
+        {
+            n.Title = IpxText.Create("en", "Node");
+            n.ValidFrom = "2025";
+            n.ValidTo = "2026-03-04";
+        }).BuildValidated();
+
+        Assert.Equal("2025", document.Nodes[0].ValidFrom);
+        Assert.Equal("2026-03-04", document.Nodes[0].ValidTo);
+    }
+
+    [Theory]
+    [InlineData("a", true)]
+    [InlineData("0.1:a_b-c", true)]
+    [InlineData("A1234567890", true)]
+    [InlineData("-leading", false)]
+    [InlineData("has space", false)]
+    [InlineData("åäö", false)]
+    [InlineData("", false)]
+    [InlineData(null, false)]
+    public void An_id_is_checked_the_way_the_schema_does(string id, bool valid)
+    {
+        Assert.Equal(valid, IpxId.IsValid(id));
+    }
+
+    [Fact]
+    public void An_id_of_128_characters_is_valid_and_one_of_129_is_not()
+    {
+        Assert.True(IpxId.IsValid(new string('a', 128)));
+        Assert.False(IpxId.IsValid(new string('a', 129)));
     }
 }

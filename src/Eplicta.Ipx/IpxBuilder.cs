@@ -231,13 +231,16 @@ public sealed class IpxBuilder
         return AddRow(row);
     }
 
-    /// <summary>Adds a copy of the row. Changing the original afterwards does not change the document.</summary>
+    /// <summary>Adds a copy of the row. Changing the original afterwards does not change the document. A row that names no school forms gets an empty list, which means that the forms are not stated.</summary>
     public IpxBuilder AddRow(IpxRow row)
     {
         ArgumentNullException.ThrowIfNull(row);
         RequireNew(_rowIds, row.Id, "row");
 
-        _document.Rows.Add(new IpxRow(Copy(row.Node)));
+        var copy = Copy(row.Node);
+        if (!copy.ContainsKey("forms")) copy["forms"] = new JsonArray();
+
+        _document.Rows.Add(new IpxRow(copy));
         return this;
     }
 
