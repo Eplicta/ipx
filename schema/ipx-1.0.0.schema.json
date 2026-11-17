@@ -1,0 +1,591 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloud.fortdocs.app/informationshanteringsplan/ipx/1.0.0/schema.json",
+  "title": "IPX 1.0.0: Information Plan Exchange",
+  "description": "A document in the IPX format: an information management plan, a municipality's published retention rules, a national recommendation, or a common classification tree. Everything not listed here belongs in an ext object, never next to the listed properties.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "formatVersion", "kind", "document"],
+  "properties": {
+    "$schema": { "type": "string", "description": "URL of the schema the document was written against." },
+    "format": { "const": "ipx", "description": "The format marker. Always the text ipx." },
+    "formatVersion": { "type": "string", "pattern": "^1\\.[0-9]+\\.[0-9]+$", "description": "Semantic version of the format. A reader accepts any 1.x.y." },
+    "kind": {
+      "enum": ["plan", "reference", "recommendation", "taxonomy"],
+      "description": "plan: the plan of one organisation. reference: the rules one authority has published. recommendation: advice that binds nobody. taxonomy: a classification tree with no rows."
+    },
+    "document": { "$ref": "#/$defs/Document" },
+    "municipality": { "$ref": "#/$defs/Municipality" },
+    "organisation": { "$ref": "#/$defs/Organisation" },
+    "responsibilities": {
+      "type": "array",
+      "description": "Who is responsible for what in the plan. Roles only, never personal names.",
+      "items": { "$ref": "#/$defs/Responsibility" }
+    },
+    "operators": {
+      "type": "array",
+      "description": "The bodies in a municipality that run school forms.",
+      "items": { "$ref": "#/$defs/Operator" }
+    },
+    "systems": {
+      "type": "array",
+      "description": "The information systems records are kept in.",
+      "items": { "$ref": "#/$defs/System" }
+    },
+    "nodes": {
+      "type": "array",
+      "description": "The classification tree. Array order is display order.",
+      "items": { "$ref": "#/$defs/Node" }
+    },
+    "rows": {
+      "type": "array",
+      "description": "The rows: what is kept, where, and for how long. Array order is display order.",
+      "items": { "$ref": "#/$defs/Row" }
+    },
+    "provenance": { "$ref": "#/$defs/Provenance" },
+    "ext": { "$ref": "#/$defs/Ext" }
+  },
+  "$defs": {
+    "Id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "description": "Identifier unique within the document and stable across versions of the same plan."
+    },
+    "Uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lower-case UUID."
+    },
+    "Date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "A calendar date, yyyy-MM-dd."
+    },
+    "PartialDate": {
+      "type": "string",
+      "pattern": "^[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?$",
+      "description": "A year, a year and month, or a full date."
+    },
+    "Language": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$",
+      "description": "A BCP 47 language tag such as sv or en."
+    },
+    "Text": {
+      "type": "object",
+      "description": "Text in one or more languages, keyed by language tag. Never a machine translation presented as the original.",
+      "minProperties": 1,
+      "propertyNames": { "$ref": "#/$defs/Language" },
+      "additionalProperties": { "type": "string" }
+    },
+    "Form": {
+      "enum": ["shared", "preschool", "preschool-class", "leisure-centre", "compulsory-school", "upper-secondary-school", "adult-education", "other-education"],
+      "description": "A school form. shared is governance and support that every form needs."
+    },
+    "Forms": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Form" },
+      "uniqueItems": true
+    },
+    "Confidence": { "enum": ["high", "medium", "low"] },
+    "Ext": {
+      "type": "object",
+      "description": "Extra data under reverse-domain keys. A reader that saves the document must keep it unchanged.",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)+$" },
+      "additionalProperties": true
+    },
+    "Reference": {
+      "type": "object",
+      "description": "A code in another classification scheme, such as KLASSA.",
+      "additionalProperties": false,
+      "required": ["scheme", "code"],
+      "properties": {
+        "scheme": { "type": "string", "minLength": 1 },
+        "code": { "type": "string", "minLength": 1 },
+        "title": { "type": "string" }
+      }
+    },
+    "Document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "language"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Uuid" },
+        "key": { "$ref": "#/$defs/Id", "description": "A readable, stable name for the document, such as skr or fortdocs-default." },
+        "name": { "$ref": "#/$defs/Text" },
+        "description": { "$ref": "#/$defs/Text" },
+        "version": { "type": "string", "description": "A label for this version of the content, chosen by the author." },
+        "status": { "enum": ["draft", "proposed", "adopted", "superseded", "withdrawn", "unknown"] },
+        "language": { "$ref": "#/$defs/Language", "description": "The language of verbatim content such as asWritten text." },
+        "noteLanguage": { "$ref": "#/$defs/Language", "description": "The language of notes and explanations. Defaults to the language." },
+        "createdOn": { "$ref": "#/$defs/Date" },
+        "updatedOn": { "$ref": "#/$defs/Date" },
+        "validFrom": { "oneOf": [{ "$ref": "#/$defs/PartialDate" }, { "type": "null" }] },
+        "validTo": { "oneOf": [{ "$ref": "#/$defs/PartialDate" }, { "type": "null" }] },
+        "supersedes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": { "$ref": "#/$defs/Uuid" },
+              "version": { "type": "string" },
+              "ref": { "type": "string", "description": "A URI or path to the document that is replaced." }
+            }
+          }
+        },
+        "coverage": { "enum": ["complete", "partial", "none"], "description": "Whether the rules cover every school form the authority runs." },
+        "coverageNote": { "type": "string" },
+        "taxonomy": {
+          "type": "object",
+          "description": "The taxonomy document that the mappings of the rows point into.",
+          "additionalProperties": false,
+          "required": ["id"],
+          "properties": {
+            "id": { "$ref": "#/$defs/Uuid" },
+            "version": { "type": "string" }
+          }
+        },
+        "generator": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" }
+          }
+        },
+        "ext": { "$ref": "#/$defs/Ext" }
+      }
+    },
+    "Municipality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "name"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^[0-9]{4}$", "description": "The four-digit kommun code." },
+        "name": { "type": "string" },
+        "county": { "type": "string" }
+      }
+    },
+    "Organisation": {
+      "type": "object",
+      "description": "The organisation a plan is for, the huvudman.",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string" },
+        "legalForm": { "type": "string" },
+        "forms": { "$ref": "#/$defs/Forms" },
+        "units": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "kommun": { "type": "string" },
+              "code": { "type": "string" },
+              "forms": { "$ref": "#/$defs/Forms" },
+              "grades": { "type": "array", "items": { "type": "string" } },
+              "skolenhetskod": { "type": "string" },
+              "sourceUri": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "pupilTotal": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value"],
+          "properties": {
+            "value": { "type": "integer", "minimum": 0 },
+            "basis": { "type": "string" },
+            "sourceId": { "$ref": "#/$defs/Id" },
+            "note": { "type": "string" }
+          }
+        },
+        "regime": { "enum": ["smaller-16f", "larger-osl", "public"], "description": "Which retention regime applies to the organisation." },
+        "regimeNote": { "type": "string" },
+        "ext": { "$ref": "#/$defs/Ext" }
+      }
+    },
+    "Responsibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "duty"],
+      "properties": {
+        "role": { "type": "string" },
+        "duty": { "type": "string" }
+      }
+    },
+    "Operator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["body", "forms"],
+      "properties": {
+        "body": { "type": "string" },
+        "forms": { "$ref": "#/$defs/Forms" },
+        "note": { "type": "string" }
+      }
+    },
+    "System": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" },
+        "name": { "type": "string" },
+        "kind": { "type": "string" },
+        "purpose": { "type": "string" },
+        "confidentiality": { "type": "string" },
+        "confirmedPublic": { "type": "boolean", "description": "Whether the use of the system is stated in a public source." },
+        "uri": { "type": ["string", "null"] },
+        "note": { "type": "string" },
+        "ext": { "$ref": "#/$defs/Ext" }
+      }
+    },
+    "SourceRef": {
+      "type": "object",
+      "description": "Where in a source a row or node was read.",
+      "additionalProperties": false,
+      "properties": {
+        "ref": { "$ref": "#/$defs/Id", "description": "The id of an entry in provenance.sources." },
+        "page": { "type": ["integer", "null"], "description": "The page in the file." },
+        "printedPage": { "type": ["integer", "null"], "description": "The page number printed on the page." },
+        "continuesOnPage": { "type": "integer" },
+        "section": { "type": "string" },
+        "locator": { "type": "string", "description": "Anything else that finds the place, such as a heading or a table." }
+      }
+    },
+    "Node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" },
+        "uid": { "$ref": "#/$defs/Uuid", "description": "A globally unique, stable identity." },
+        "sourceId": { "type": "string", "description": "The identifier the node had in the system or standard it came from." },
+        "uri": { "type": "string", "description": "A stable IRI for the node." },
+        "code": { "type": ["string", "null"], "description": "The code shown to people, such as 3.5.1. It may change when rows are reordered." },
+        "parent": { "oneOf": [{ "$ref": "#/$defs/Id" }, { "type": "null" }] },
+        "nodeKind": { "enum": ["group", "leaf"] },
+        "level": { "type": "string", "description": "What the node is in its source, such as class, series or folder." },
+        "form": { "$ref": "#/$defs/Form" },
+        "title": { "$ref": "#/$defs/Text" },
+        "description": { "$ref": "#/$defs/Text" },
+        "concept": { "oneOf": [{ "$ref": "#/$defs/Id" }, { "type": "null" }], "description": "Links nodes that mean the same thing in different school forms." },
+        "caseRegistration": { "type": "string" },
+        "system": { "$ref": "#/$defs/Id" },
+        "references": { "type": "array", "items": { "$ref": "#/$defs/Reference" } },
+        "source": { "$ref": "#/$defs/SourceRef" },
+        "validFrom": { "oneOf": [{ "$ref": "#/$defs/PartialDate" }, { "type": "null" }] },
+        "validTo": { "oneOf": [{ "$ref": "#/$defs/PartialDate" }, { "type": "null" }] },
+        "ext": { "$ref": "#/$defs/Ext" }
+      }
+    },
+    "Mapping": {
+      "type": "object",
+      "description": "How a row corresponds to a node in the taxonomy.",
+      "additionalProperties": false,
+      "required": ["node", "relation"],
+      "properties": {
+        "node": { "type": "string", "description": "The id of a taxonomy node." },
+        "relation": {
+          "enum": ["exact", "covers", "part", "similar"],
+          "description": "exact: same thing. covers: the row is wider than the node. part: the row is only part of the node. similar: close but not the same."
+        }
+      }
+    },
+    "AsWritten": {
+      "type": "object",
+      "description": "The wording of the source, kept verbatim in the document language.",
+      "additionalProperties": false,
+      "properties": {
+        "code": { "type": ["string", "null"] },
+        "heading": { "type": "string" },
+        "text": { "type": "string" },
+        "storage": { "type": ["string", "null"] },
+        "page": { "type": ["integer", "null"] },
+        "continuesOnPage": { "type": "integer" },
+        "cells": {
+          "type": "object",
+          "description": "Further columns of the source table, by column name.",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "Retention": {
+      "type": "object",
+      "description": "What happens to the information and when. A row has more than one entry when the source gives separate periods, for example for granted and refused cases.",
+      "additionalProperties": false,
+      "required": ["disposition"],
+      "properties": {
+        "disposition": {
+          "enum": ["retain", "dispose", "handover", "review", "unclear"],
+          "description": "retain: keep for good. dispose: gallras. handover: pass to another party. review: decide later. unclear: the source cannot be read as one rule."
+        },
+        "dispositionText": { "type": "string", "description": "The source's own word for the disposition." },
+        "period": {
+          "type": "object",
+          "description": "The period as the source states it.",
+          "additionalProperties": false,
+          "required": ["amount", "unit"],
+          "properties": {
+            "amount": { "type": "number", "minimum": 0 },
+            "unit": { "enum": ["day", "month", "year"] }
+          }
+        },
+        "months": { "type": ["integer", "null"], "minimum": 0, "description": "The period in whole months, rounded up. Null when the source gives no period." },
+        "trigger": {
+          "enum": ["from-creation", "year-end", "school-year-end", "case-closed", "enrolment-end", "decision-date", "superseded", "obsolete", "other", "unspecified", "none", null],
+          "description": "What the period counts from. Different triggers are never converted into each other. none belongs to retain. unspecified means the source gives a period but not what it counts from. Null means unknown."
+        },
+        "triggerText": { "type": "string", "description": "The source's own words for the trigger." },
+        "triggerInferred": { "type": "boolean", "description": "True when the trigger comes from a general statement of the plan, not from the row." },
+        "qualifier": { "enum": ["earliest", "latest"], "description": "earliest: disposal may not happen before. latest: it must happen by." },
+        "latestEvent": { "type": "string" },
+        "condition": { "type": "string", "description": "A condition in the source's words that the period or the disposal depends on." },
+        "outcome": { "enum": ["grant", "refusal"], "description": "Which outcome of a case this entry applies to." },
+        "ruleKey": { "type": "string", "description": "The key of the retention rule in the system the document came from." },
+        "legalBasis": { "type": "string", "description": "The law, decision or recommendation the entry rests on." },
+        "note": { "type": "string" },
+        "ext": { "$ref": "#/$defs/Ext" }
+      }
+    },
+    "SuggestedNode": {
+      "type": "object",
+      "description": "A node that would hold a row that fits no node in the taxonomy yet.",
+      "additionalProperties": false,
+      "required": ["id", "title"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "form": { "$ref": "#/$defs/Form" }
+      }
+    },
+    "Row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "forms", "retention"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" },
+        "uid": { "$ref": "#/$defs/Uuid" },
+        "sourceId": { "type": "string" },
+        "rowKind": { "enum": ["rule", "process", "recordType", "caseType"], "description": "rule: a retention rule as published. process: the retention of a whole node. recordType and caseType: a type of record or case in a plan. Defaults to rule." },
+        "plan": { "oneOf": [{ "$ref": "#/$defs/Id" }, { "type": "null" }], "description": "The id of the plan in provenance.plans that the row comes from." },
+        "forms": { "$ref": "#/$defs/Forms" },
+        "name": { "$ref": "#/$defs/Text" },
+        "description": { "$ref": "#/$defs/Text" },
+        "node": { "$ref": "#/$defs/Id", "description": "The node in this document's own tree that the row sits under." },
+        "mappings": { "type": "array", "items": { "$ref": "#/$defs/Mapping" } },
+        "suggestedNode": { "$ref": "#/$defs/SuggestedNode" },
+        "asWritten": { "$ref": "#/$defs/AsWritten" },
+        "registration": { "enum": ["registered", "kept-ordered"], "description": "registered: entered in the diary. kept-ordered: kept in order without being registered." },
+        "registrationText": { "type": "string" },
+        "personalData": { "type": "boolean" },
+        "secrecy": { "type": "string", "description": "The name of a secrecy class." },
+        "system": { "$ref": "#/$defs/Id" },
+        "references": { "type": "array", "items": { "$ref": "#/$defs/Reference" } },
+        "retention": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Retention" } },
+        "source": { "$ref": "#/$defs/SourceRef" },
+        "confidence": { "$ref": "#/$defs/Confidence" },
+        "current": { "type": "boolean", "description": "False when the row no longer applies to new documents. Defaults to true." },
+        "currentNote": { "type": "string" },
+        "ruleType": {
+          "enum": ["plan-rule", "one-off-decision", "gdpr-limit", "platform-statement", "general-principle", "instruction", "promise", "placeholder", "recommendation-quote"],
+          "description": "What kind of statement the row is. Defaults to plan-rule."
+        },
+        "trackedChange": {
+          "type": "object",
+          "description": "How a source with tracked changes marks the row.",
+          "additionalProperties": false,
+          "required": ["state"],
+          "properties": {
+            "state": { "type": "string" },
+            "detail": { "type": "string" }
+          }
+        },
+        "outOfScope": { "type": "boolean", "description": "True for a row about something other than school activities." },
+        "ext": { "$ref": "#/$defs/Ext" }
+      }
+    },
+    "Provenance": {
+      "type": "object",
+      "description": "Where the content came from and what is known about it.",
+      "additionalProperties": false,
+      "properties": {
+        "origins": {
+          "type": "array",
+          "description": "The documents or systems this document was converted from.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["standard"],
+            "properties": {
+              "standard": { "type": "string", "description": "What the original was: a standard, a format or a reverse-domain name." },
+              "version": { "type": "string" },
+              "mediaType": { "type": "string" },
+              "uri": { "type": "string" },
+              "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+              "content": { "type": "string", "description": "The original, base64-encoded, when it is small enough to keep." },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "conversions": {
+          "type": "array",
+          "description": "Each conversion the document has been through, and what it lost.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["on", "from", "to"],
+            "properties": {
+              "on": { "$ref": "#/$defs/Date" },
+              "from": { "type": "string" },
+              "to": { "type": "string" },
+              "tool": { "type": "string" },
+              "losses": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "sources": { "type": "array", "items": { "$ref": "#/$defs/Source" } },
+        "plans": { "type": "array", "items": { "$ref": "#/$defs/SourcePlan" } },
+        "missing": { "type": "array", "items": { "$ref": "#/$defs/Missing" } },
+        "checks": { "type": "array", "items": { "$ref": "#/$defs/Check" } }
+      }
+    },
+    "Source": {
+      "type": "object",
+      "description": "A document the content was read from.",
+      "additionalProperties": false,
+      "required": ["id", "title"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" },
+        "uri": { "type": ["string", "null"] },
+        "title": { "type": "string" },
+        "kind": { "enum": ["plan-pdf", "plan-html", "decision", "protocol", "page", "recommendation-pdf", "other"] },
+        "publisher": { "type": "string" },
+        "edition": { "type": "string" },
+        "publishedDate": { "oneOf": [{ "$ref": "#/$defs/PartialDate" }, { "type": "null" }] },
+        "publishedDateBasis": { "enum": ["meeting-date", "document-metadata", "page-stated", "unknown"] },
+        "lastFetchedAt": { "oneOf": [{ "$ref": "#/$defs/Date" }, { "type": "null" }] },
+        "fetchedBasis": { "enum": ["verified", "file-timestamp", "report-date", "user-supplied-copy", null] },
+        "sha256": { "oneOf": [{ "type": "string", "pattern": "^[0-9a-f]{64}$" }, { "type": "null" }] },
+        "sha256Basis": { "enum": ["file", "text-extract"], "description": "What the hash is of. Defaults to file." },
+        "note": { "type": "string" },
+        "uriNote": { "type": "string" },
+        "ext": { "$ref": "#/$defs/Ext" }
+      }
+    },
+    "SourcePlan": {
+      "type": "object",
+      "description": "A plan or decision that rows are attributed to.",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" },
+        "name": { "type": "string" },
+        "body": { "type": "string" },
+        "scope": { "enum": ["namnd", "kommunovergripande", "huvudman"], "description": "namnd: one committee. kommunovergripande: the whole municipality. huvudman: one organisation." },
+        "forms": { "$ref": "#/$defs/Forms" },
+        "decidedDate": { "oneOf": [{ "$ref": "#/$defs/PartialDate" }, { "type": "null" }] },
+        "decisionRef": { "type": ["string", "null"] },
+        "publishedDate": { "oneOf": [{ "$ref": "#/$defs/PartialDate" }, { "type": "null" }] },
+        "publishedDateBasis": { "enum": ["meeting-date", "document-metadata", "page-stated", "unknown"] },
+        "lastKnownPlanDate": { "oneOf": [{ "$ref": "#/$defs/PartialDate" }, { "type": "null" }] },
+        "proposedValidFrom": { "oneOf": [{ "$ref": "#/$defs/PartialDate" }, { "type": "null" }] },
+        "status": { "enum": ["text-public", "draft-only", "not-public", "not-found", "unreachable", "not-researched"] },
+        "structure": { "enum": ["klassa", "school-vir", "own", "unknown"], "description": "How the plan is organised." },
+        "delegatesTo": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["planId"],
+            "properties": {
+              "planId": { "$ref": "#/$defs/Id" },
+              "topics": { "type": "array", "items": { "type": "string" } },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "inaktualitet": {
+          "type": "object",
+          "description": "Whether and how the plan defines what vid inaktualitet means.",
+          "additionalProperties": false,
+          "properties": {
+            "defined": { "type": ["boolean", "null"] },
+            "text": { "type": "string" }
+          }
+        },
+        "periodCounting": {
+          "type": "object",
+          "description": "What a plain period of N years counts from, when the plan says so.",
+          "additionalProperties": false,
+          "properties": {
+            "startsFrom": { "enum": ["year-end"] },
+            "scope": { "enum": ["all-rows", "some-rows"] },
+            "statement": { "type": "string" },
+            "where": { "type": "string" },
+            "note": { "type": "string" }
+          }
+        },
+        "assessment": {
+          "type": "object",
+          "description": "The reviewer's view of how usable the plan is.",
+          "additionalProperties": false,
+          "required": ["level"],
+          "properties": {
+            "level": { "$ref": "#/$defs/Confidence" },
+            "note": { "type": "string" }
+          }
+        },
+        "sourceIds": { "type": "array", "items": { "$ref": "#/$defs/Id" } },
+        "ext": { "$ref": "#/$defs/Ext" }
+      }
+    },
+    "Missing": {
+      "type": "object",
+      "description": "Something that is not usable yet, and how to get it.",
+      "additionalProperties": false,
+      "required": ["id", "kind"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" },
+        "kind": {
+          "enum": ["plan-not-public", "plan-not-found", "site-unreachable", "form-not-covered", "delegated-plan-unpublished", "plan-draft-only", "text-unreadable", "rules-vague", "rows-placeholder", "rows-not-extracted", "newer-version-possible", "source-needs-recheck", "other"]
+        },
+        "forms": { "$ref": "#/$defs/Forms" },
+        "nodes": { "type": "array", "items": { "type": "string" } },
+        "detail": { "type": "string" },
+        "nextStep": { "enum": ["recheck-homepage", "contact-city", "ask-archive", "retry-later", "none"] },
+        "contact": {
+          "oneOf": [
+            {
+              "type": "object",
+              "description": "A role and a functional address only, never a person.",
+              "additionalProperties": false,
+              "required": ["role"],
+              "properties": {
+                "role": { "type": "string" },
+                "address": { "type": ["string", "null"] }
+              }
+            },
+            { "type": "null" }
+          ]
+        },
+        "request": { "type": "string" }
+      }
+    },
+    "Check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["on", "outcome"],
+      "properties": {
+        "on": { "$ref": "#/$defs/Date" },
+        "outcome": { "enum": ["extracted", "unchanged", "changed", "new", "unreachable"] },
+        "note": { "type": "string" }
+      }
+    }
+  }
+}

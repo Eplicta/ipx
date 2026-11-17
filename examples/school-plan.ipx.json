@@ -1,0 +1,107 @@
+{
+  "$schema": "https://cloud.fortdocs.app/informationshanteringsplan/ipx/1.0.0/schema.json",
+  "format": "ipx",
+  "formatVersion": "1.0.0",
+  "kind": "plan",
+  "document": {
+    "id": "0b6c8c58-4f7e-4f43-9a1b-2f1d7a9c3e10",
+    "key": "example-school-plan",
+    "name": { "sv": "Exempelskolans informationshanteringsplan", "en": "Example School information management plan" },
+    "description": { "en": "An invented plan that shows each part of the format. It describes no real school." },
+    "version": "2027 draft",
+    "status": "draft",
+    "language": "sv",
+    "noteLanguage": "en",
+    "createdOn": "2026-11-17",
+    "updatedOn": "2026-11-17",
+    "validFrom": "2027-01-01",
+    "generator": { "name": "hand-written example" }
+  },
+  "organisation": {
+    "name": "Exempelskolan AB",
+    "legalForm": "aktiebolag",
+    "forms": ["compulsory-school", "leisure-centre"],
+    "pupilTotal": { "value": 240, "basis": "Number of pupils in autumn 2026" },
+    "regime": "smaller-16f"
+  },
+  "responsibilities": [
+    { "role": "Rektor", "duty": "Adopts the plan and decides on gallring." },
+    { "role": "Administratör", "duty": "Registers matters and carries out gallring." }
+  ],
+  "systems": [
+    { "id": "sys-diary", "name": "Diary and archive", "kind": "diary", "purpose": "Registered matters and the archive.", "confidentiality": "Access by role." },
+    { "id": "sys-pupil", "name": "Pupil administration system", "kind": "student-administration", "purpose": "Attendance, grades and development talks.", "confirmedPublic": false }
+  ],
+  "nodes": [
+    { "id": "governance", "code": "1", "parent": null, "title": { "sv": "Styra verksamheten", "en": "Govern the operation" } },
+    { "id": "governance.board-minutes", "code": "1.1", "parent": "governance", "title": { "sv": "Styrelsens beslut", "en": "Board decisions" }, "system": "sys-diary" },
+    { "id": "pupils", "code": "2", "parent": null, "form": "compulsory-school", "title": { "sv": "Bedriva grundskola", "en": "Run compulsory school" } },
+    { "id": "pupils.admission", "code": "2.1", "parent": "pupils", "form": "compulsory-school", "title": { "sv": "Anta elever", "en": "Admit pupils" }, "system": "sys-pupil" },
+    { "id": "pupils.final-grades", "code": "2.2", "parent": "pupils", "form": "compulsory-school", "title": { "sv": "Sätta slutbetyg", "en": "Issue final grades" }, "system": "sys-diary" }
+  ],
+  "rows": [
+    {
+      "id": "r1",
+      "rowKind": "recordType",
+      "forms": ["shared"],
+      "name": { "sv": "Styrelseprotokoll", "en": "Board minutes" },
+      "node": "governance.board-minutes",
+      "registration": "registered",
+      "personalData": false,
+      "secrecy": "Public",
+      "system": "sys-diary",
+      "retention": [
+        { "disposition": "retain", "trigger": "none", "months": null, "note": "Kept for good." }
+      ]
+    },
+    {
+      "id": "r2",
+      "rowKind": "caseType",
+      "forms": ["compulsory-school"],
+      "name": { "sv": "Ansökan om skolplats", "en": "Application for a school place" },
+      "node": "pupils.admission",
+      "registration": "registered",
+      "personalData": true,
+      "secrecy": "Education",
+      "retention": [
+        {
+          "disposition": "dispose",
+          "period": { "amount": 6, "unit": "year" },
+          "months": 72,
+          "trigger": "case-closed",
+          "outcome": "grant",
+          "legalBasis": "The plan's own decision"
+        },
+        {
+          "disposition": "dispose",
+          "period": { "amount": 2, "unit": "year" },
+          "months": 24,
+          "trigger": "case-closed",
+          "outcome": "refusal"
+        }
+      ]
+    },
+    {
+      "id": "r3",
+      "rowKind": "recordType",
+      "forms": ["compulsory-school"],
+      "name": { "sv": "Slutbetyg", "en": "Final grades" },
+      "node": "pupils.final-grades",
+      "registration": "kept-ordered",
+      "personalData": true,
+      "secrecy": "Education",
+      "asWritten": { "heading": "Slutbetyg", "text": "Slutbetyg bevaras." },
+      "retention": [
+        { "disposition": "retain", "trigger": "none", "months": null, "legalBasis": "Skolförordningen" }
+      ],
+      "mappings": [
+        { "node": "compulsory-school.issue-final-grades", "relation": "exact" }
+      ]
+    }
+  ],
+  "provenance": {
+    "conversions": [
+      { "on": "2026-11-17", "from": "hand-written", "to": "ipx/1.0.0", "losses": [] }
+    ]
+  }
+}
