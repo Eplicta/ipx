@@ -9,6 +9,8 @@ on:
       - 'schema/**'
       - 'version.txt'
       - 'Directory.Build.props'
+      - 'Eplicta.Ipx.sln'
+      - '.github/workflows/publish.yml'
   workflow_dispatch:
 
 permissions:
