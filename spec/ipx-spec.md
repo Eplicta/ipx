@@ -1,6 +1,6 @@
 # IPX: Information Plan Exchange
 
-**Version 1.0.0** (draft, not yet released). Schema: [`ipx-1.0.0.schema.json`](../schema/ipx-1.0.0.schema.json). Example: [`school-plan.ipx.json`](../examples/school-plan.ipx.json).
+**Version 1.0.0** (2026-11-18). Schema: [`ipx-1.0.0.schema.json`](../schema/ipx-1.0.0.schema.json). Example: [`school-plan.ipx.json`](../examples/school-plan.ipx.json).
 
 IPX is an open format proposed by Eplicta. It is not a standard of any standards body, and nothing in this document says that it is adopted by anyone else.
 

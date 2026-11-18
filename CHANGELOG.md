@@ -1,6 +1,8 @@
 # Changelog
 
-## 1.0.0 (draft, not yet released)
+## 1.0.0 (2026-11-18)
+
+The first stable release of the specification, the schema, the `Eplicta.Ipx` library and the `Eplicta.Ipx.Tool` command line tool.
 
 Changes made after an independent review of the specification, before 1.0.0:
 

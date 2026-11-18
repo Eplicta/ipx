@@ -17,7 +17,7 @@ The version is worked out from `version.txt` and the number of the `Publish` run
 
 | `version.txt` holds | Published as | On nuget.org |
 |---|---|---|
-| `1.0-preview` | `1.0.0-preview.<run>` | A prerelease. Used while the specification is a draft. |
+| `1.0-preview` | `1.0.0-preview.<run>` | A prerelease, for work towards the next version. |
 | `1.0` | `1.0.<run>` | A stable version. |
 
 To release a new minor or major version, change `version.txt` in the pull request, for example to `1.1` or `2.0`. The run number keeps counting, so after a change from `1.0` to `1.1` the next version is `1.1.<run>` and still higher than every earlier one.
